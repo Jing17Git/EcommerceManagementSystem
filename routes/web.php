@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminController;
@@ -50,6 +51,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     // Admin Category CRUD
      Route::resource('categories', AdminCategoryController::class)->except(['show']);
 
+    // Admin Order Management
+     Route::resource('orders', AdminOrderController::class)->except(['create','store']);
+
     // Categories CRUD
     Route::resource('categories', AdminController::class)->only(['index','create','store','edit','update','destroy'])->names([
         'index' => 'categories.index',
@@ -60,8 +64,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         'destroy' => 'categories.destroy',
     ]);
 
-    // Orders CRUD
-    Route::get('/orders', [AdminController::class, 'ordersIndex'])->name('orders.index');
+   
 
     // Sellers CRUD
     Route::get('/sellers', [AdminController::class, 'sellersIndex'])->name('sellers.index');

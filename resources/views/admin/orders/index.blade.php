@@ -1,41 +1,57 @@
 <x-admin-layout>
 <x-slot name="header">Orders</x-slot>
 
-<style>
-:root {
-  --orange: #f97316;
-  --orange-d: #ea6c0a;
-  --orange-l: #fff7ed;
-  --border: #f0f0f0;
-  --txt: #111827;
-  --muted: #9ca3af;
-  --sec: #6b7280;
-}
-.ph { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
-.ph h1 { font-size: 20px; font-weight: 700; color: var(--txt); letter-spacing: -.03em; }
-.ph p { font-size: 13px; color: var(--muted); margin-top: 3px; }
-.card { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-.card-body { padding: 20px; text-align: center; color: var(--muted); }
-.empty-state { padding: 60px 20px; }
-.empty-icon { font-size: 48px; margin-bottom: 16px; }
-.empty-title { font-size: 16px; font-weight: 600; color: var(--txt); margin-bottom: 8px; }
-.empty-desc { font-size: 13px; color: var(--muted); }
-</style>
-
 <div class="ph">
   <div>
     <h1>Orders</h1>
-    <p>Track and manage customer orders</p>
+    <p>Manage all customer orders</p>
   </div>
 </div>
 
 <div class="card">
   <div class="card-body">
+    @if($orders->count())
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Order Number</th>
+          <th>Buyer</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($orders as $order)
+        <tr>
+          <td>{{ $order->id }}</td>
+          <td>{{ $order->order_number }}</td>
+          <td>{{ $order->user->name }}</td>
+          <td>${{ number_format($order->total_amount,2) }}</td>
+          <td>{{ ucfirst($order->status) }}</td>
+          <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
+          <td>
+            <a href="{{ route('admin.orders.edit',$order) }}" class="btn-action btn-edit">Edit</a>
+            <form action="{{ route('admin.orders.destroy',$order) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Delete this order?')">
+              @csrf
+              @method('DELETE')
+              <button class="btn-action btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+    {{ $orders->links() }}
+    @else
     <div class="empty-state">
       <div class="empty-icon">🛒</div>
       <div class="empty-title">No Orders Yet</div>
-      <div class="empty-desc">Orders will appear here once customers make purchases.</div>
+      <div class="empty-desc">Orders will appear here once customers place them.</div>
     </div>
+    @endif
   </div>
 </div>
 </x-admin-layout>
