@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
@@ -12,7 +13,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id',
-        'user_id',
+        'seller_id',
         'name',
         'slug',
         'description',
@@ -28,19 +29,54 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
-    /**
-     * Get the category that owns the product.
-     */
+    // Relationships
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Get the seller (user) that owns the product.
-     */
-    public function user(): BelongsTo
+    public function seller(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    // Auto-generate slug
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $product->slug = self::generateUniqueSlug($product->name);
+        });
+
+        static::updating(function ($product) {
+            if ($product->isDirty('name')) {
+                $product->slug = self::generateUniqueSlug($product->name);
+            }
+        });
+    }
+
+    public static function generateUniqueSlug($name)
+    {
+        $slug = Str::slug($name);
+        $original = $slug;
+        $count = 1;
+
+        while (self::where('slug', $slug)->exists()) {
+            $slug = $original . '-' . $count++;
+        }
+
+        return $slug;
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    // Optional image URL helper
+    public function imageUrl()
+    {
+        return $this->image ? asset('storage/' . $this->image) : asset('images/no-image.png');
     }
 }

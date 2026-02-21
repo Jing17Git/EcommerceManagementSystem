@@ -12,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); // seller
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->integer('stock')->default(0);
-            $table->string('image')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-        });
+    $table->id();
+    $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
+    $table->foreignId('seller_id')->nullable()->constrained('users')->onDelete('set null');
+    $table->string('name');
+    $table->string('slug')->unique();
+    $table->text('description')->nullable();
+    $table->decimal('price', 10, 2);
+    $table->integer('stock')->default(0);
+    $table->string('image')->nullable();
+    $table->boolean('is_active')->default(true);
+    $table->timestamps();
+});
     }
 
     /**

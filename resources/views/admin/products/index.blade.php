@@ -1,53 +1,71 @@
 <x-admin-layout>
 <x-slot name="header">Products</x-slot>
 
-<style>
-:root {
-  --orange: #f97316;
-  --orange-d: #ea6c0a;
-  --orange-l: #fff7ed;
-  --border: #f0f0f0;
-  --txt: #111827;
-  --muted: #9ca3af;
-  --sec: #6b7280;
-}
-.ph { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
-.ph h1 { font-size: 20px; font-weight: 700; color: var(--txt); letter-spacing: -.03em; }
-.ph p { font-size: 13px; color: var(--muted); margin-top: 3px; }
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: var(--orange); color: #fff; border: none; border-radius: 9px;
-  padding: 8px 16px; font-size: 13.5px; font-weight: 600; font-family: inherit;
-  cursor: pointer; box-shadow: 0 2px 10px rgba(249,115,22,.28); transition: background .15s;
-}
-.btn-primary:hover { background: var(--orange-d); }
-.btn-primary svg { width: 15px; height: 15px; stroke: #fff; stroke-width: 2.5; fill: none; }
-.card { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-.card-body { padding: 20px; text-align: center; color: var(--muted); }
-.empty-state { padding: 60px 20px; }
-.empty-icon { font-size: 48px; margin-bottom: 16px; }
-.empty-title { font-size: 16px; font-weight: 600; color: var(--txt); margin-bottom: 8px; }
-.empty-desc { font-size: 13px; color: var(--muted); }
-</style>
-
 <div class="ph">
   <div>
     <h1>Products</h1>
     <p>Manage your store products</p>
   </div>
-  <a href="{{ route('admin.products.create') }}" class="btn-primary">
-    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-    Add Product
-  </a>
+  <a href="{{ route('admin.products.create') }}" class="btn-primary">Add Product</a>
 </div>
 
 <div class="card">
   <div class="card-body">
+    @if($products->count() > 0)
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th width="150">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach($products as $product)
+        <tr>
+          <td>
+            <img src="{{ $product->imageUrl() }}" width="50" alt="Image">
+          </td>
+          <td>{{ $product->name }}</td>
+          <td>{{ $product->category?->name ?? '-' }}</td>
+          <td>₱{{ number_format($product->price,2) }}</td>
+          <td>{{ $product->stock }}</td>
+          <td>
+            @if($product->is_active)
+              <span class="badge badge-success">Active</span>
+            @else
+              <span class="badge badge-danger">Inactive</span>
+            @endif
+          </td>
+          <td>
+            <a href="{{ route('admin.products.edit', $product) }}" class="btn-action btn-edit">Edit</a>
+
+            <form action="{{ route('admin.products.destroy', $product) }}"
+                  method="POST" style="display:inline-block" 
+                  onsubmit="return confirm('Delete this product?')">
+              @csrf
+              @method('DELETE')
+              <button class="btn-action btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+
+    {{ $products->links() }}
+
+    @else
     <div class="empty-state">
       <div class="empty-icon">📦</div>
       <div class="empty-title">No Products Yet</div>
       <div class="empty-desc">Products will appear here once you add them to your store.</div>
     </div>
+    @endif
   </div>
 </div>
 </x-admin-layout>
