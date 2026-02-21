@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuyerController;
@@ -45,6 +46,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // Admin Product CRUD (all products)
     Route::resource('products', AdminProductController::class)->except(['show']);
+
+    // Admin Category CRUD
+     Route::resource('categories', AdminCategoryController::class)->except(['show']);
 
     // Categories CRUD
     Route::resource('categories', AdminController::class)->only(['index','create','store','edit','update','destroy'])->names([
