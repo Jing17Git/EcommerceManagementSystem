@@ -289,7 +289,7 @@
                 <div class="bg-white rounded-xl border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-bold text-gray-900">Top Products</h3>
-                        <a href="{{ route('seller.products') }}" class="text-sm font-medium text-orange-600 hover:text-orange-700">View All →</a>
+<a href="{{ route('seller.products.index') }}" class="text-sm font-medium text-orange-600 hover:text-orange-700">View All →</a>
                     </div>
                     <div class="space-y-4">
                         @forelse($topProducts as $product)

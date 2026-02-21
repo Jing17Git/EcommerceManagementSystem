@@ -66,7 +66,7 @@
                 <span>Dashboard</span>
             </a>
             
-            <a href="{{ route('seller.products') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('seller.products') ? 'active' : '' }}">
+<a href="{{ route('seller.products.index') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('seller.products.index') ? 'active' : '' }}">
                 <i class="fas fa-box"></i>
                 <span>Products</span>
                 <span class="ml-auto bg-orange-100 text-orange-600 text-xs font-semibold px-2 py-0.5 rounded-full">{{ $sidebarStats['productsCount'] }}</span>

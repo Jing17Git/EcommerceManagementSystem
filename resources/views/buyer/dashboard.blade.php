@@ -66,6 +66,19 @@
         <a href="{{ route('buyer.cart') }}" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg {{ request()->routeIs('buyer.cart') ? 'active' : '' }}">
             <i class="fas fa-shopping-cart text-sm"></i><span>Cart</span><span class="bg-green-100 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full">2</span>
         </a>
+        
+        {{-- Apply Seller Button - Only show if user is NOT a seller and has NO pending application --}}
+        @if(!isset($isSeller) || !$isSeller)
+            @if(!isset($hasPendingApplication) || !$hasPendingApplication)
+                <a href="{{ route('buyer.applySeller') }}" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition">
+                    <i class="fas fa-store-alt text-sm"></i><span>Apply Seller</span>
+                </a>
+            @else
+                <div class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <i class="fas fa-clock text-sm"></i><span>Application Pending</span>
+                </div>
+            @endif
+        @endif
         <div class="relative dropdown">
             <button class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
                 <i class="fas fa-th-large text-sm"></i><span>Categories</span><i class="fas fa-chevron-down text-xs"></i>
@@ -127,6 +140,31 @@
 
 <!-- Main Content -->
 <main class="pt-16 min-h-screen">
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="max-w-7xl mx-auto px-6 mt-4">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+    
+    @if(session('error'))
+        <div class="max-w-7xl mx-auto px-6 mt-4">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
+    
+    @if(session('info'))
+        <div class="max-w-7xl mx-auto px-6 mt-4">
+            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('info') }}</span>
+            </div>
+        </div>
+    @endif
+
     <!-- Hero Carousel - Trending Header -->
     <div class="hero-carousel mb-10 animate-fade-in relative overflow-hidden rounded-2xl" style="height: 480px; margin-top: 2rem;">
         @php

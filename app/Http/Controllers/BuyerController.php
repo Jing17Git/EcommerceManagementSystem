@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
+use App\Models\SellerApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -111,6 +112,15 @@ class BuyerController extends Controller
             'cartCount' => $cartCount,
         ];
         
+        // Check seller application status
+        $isSeller = $user->role === 'seller';
+        $hasPendingApplication = SellerApplication::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+        $sellerApplication = SellerApplication::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+        
         return view('buyer.dashboard', compact(
             'stats',
             'recentOrders',
@@ -120,8 +130,75 @@ class BuyerController extends Controller
             'recommendedProducts',
             'monthlySpending',
             'monthlyLabels',
-            'cartCount'
+            'cartCount',
+            'isSeller',
+            'hasPendingApplication',
+            'sellerApplication'
         ));
+    }
+
+    /**
+     * Show the seller application form.
+     */
+    public function applySeller()
+    {
+        $user = Auth::user();
+        
+        // Check if user is already a seller
+        if ($user->role === 'seller') {
+            return redirect()->route('buyer.dashboard')->with('error', 'You are already a seller.');
+        }
+        
+        // Check if user has a pending application
+        $pendingApplication = SellerApplication::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+        
+        if ($pendingApplication) {
+            return redirect()->route('buyer.dashboard')->with('info', 'You already have a pending seller application.');
+        }
+        
+        return view('buyer.apply-seller');
+    }
+
+    /**
+     * Submit seller application.
+     */
+    public function submitSellerApplication(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Check if user is already a seller
+        if ($user->role === 'seller') {
+            return redirect()->route('buyer.dashboard')->with('error', 'You are already a seller.');
+        }
+        
+        // Check if user has a pending application
+        $pendingApplication = SellerApplication::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+        
+        if ($pendingApplication) {
+            return redirect()->route('buyer.dashboard')->with('info', 'You already have a pending seller application.');
+        }
+        
+        $validated = $request->validate([
+            'business_name' => 'required|string|max:255',
+            'business_email' => 'required|email|max:255',
+            'business_phone' => 'required|string|max:20',
+            'business_address' => 'required|string|max:500',
+        ]);
+        
+        SellerApplication::create([
+            'user_id' => $user->id,
+            'business_name' => $validated['business_name'],
+            'business_email' => $validated['business_email'],
+            'business_phone' => $validated['business_phone'],
+            'business_address' => $validated['business_address'],
+            'status' => 'pending',
+        ]);
+        
+        return redirect()->route('buyer.dashboard')->with('success', 'Your seller application has been submitted successfully! Please wait for admin approval.');
     }
 
     /**

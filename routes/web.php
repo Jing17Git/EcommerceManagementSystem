@@ -31,6 +31,10 @@ Route::middleware(['auth', 'verified'])->prefix('buyer')->name('buyer.')->group(
     Route::get('/wishlist', [BuyerController::class, 'wishlist'])->name('wishlist');
     Route::get('/cart', [BuyerController::class, 'cart'])->name('cart');
     Route::get('/settings', [BuyerController::class, 'settings'])->name('settings');
+    
+    // Seller Application Routes
+    Route::get('/apply-seller', [BuyerController::class, 'applySeller'])->name('applySeller');
+    Route::post('/submit-seller-application', [BuyerController::class, 'submitSellerApplication'])->name('submitSellerApplication');
 });
 
 
