@@ -112,14 +112,24 @@ class BuyerController extends Controller
             'cartCount' => $cartCount,
         ];
         
-        // Check seller application status
-        $isSeller = $user->role === 'seller';
+        // Check seller application status using new User model methods
+        $isSeller = $user->isSeller();
         $hasPendingApplication = SellerApplication::where('user_id', $user->id)
             ->where('status', 'pending')
+            ->exists();
+        $hasApprovedApplication = SellerApplication::where('user_id', $user->id)
+            ->where('status', 'approved')
             ->exists();
         $sellerApplication = SellerApplication::where('user_id', $user->id)
             ->where('status', 'pending')
             ->first();
+
+        // Get current role (for switching between buyer/seller)
+        $currentRole = $user->getCurrentRoleDisplay();
+        
+        // Check if user has both buyer and seller roles (for switching) using new User model methods
+        $hasBuyerRole = $user->isBuyer();
+        $hasSellerRole = $user->isSeller();
         
         return view('buyer.dashboard', compact(
             'stats',
@@ -133,7 +143,11 @@ class BuyerController extends Controller
             'cartCount',
             'isSeller',
             'hasPendingApplication',
-            'sellerApplication'
+            'hasApprovedApplication',
+            'sellerApplication',
+            'currentRole',
+            'hasBuyerRole',
+            'hasSellerRole'
         ));
     }
 

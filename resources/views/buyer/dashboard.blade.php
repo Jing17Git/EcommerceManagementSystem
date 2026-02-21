@@ -64,11 +64,27 @@
             <i class="fas fa-shopping-bag text-sm"></i><span>My Orders</span>
         </a>
         <a href="{{ route('buyer.cart') }}" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg {{ request()->routeIs('buyer.cart') ? 'active' : '' }}">
-            <i class="fas fa-shopping-cart text-sm"></i><span>Cart</span><span class="bg-green-100 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full">2</span>
+            <i class="fas fa-shopping-cart text-sm"></i><span>Cart</span><span class="bg-green-100 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full"></span>
         </a>
         
-        {{-- Apply Seller Button - Only show if user is NOT a seller and has NO pending application --}}
-        @if(!isset($isSeller) || !$isSeller)
+        {{-- Switch Account Section - Show only if user has approved seller application (admin accepted) --}}
+        @if(isset($hasApprovedApplication) && $hasApprovedApplication)
+            <div class="relative dropdown">
+                <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition">
+                    <i class="fas fa-exchange-alt text-sm"></i><span>Switch Account</span>
+                </button>
+                <div class="dropdown-menu absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2">
+                    <form method="POST" action="{{ route('buyer.switchAccount') }}">
+                        @csrf
+                        <input type="hidden" name="role" value="seller">
+                        <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 w-full">
+                            <i class="fas fa-store text-sm"></i><span>Go to Seller Dashboard</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @else
+            {{-- Apply Seller Button - Only show if user hasn't applied yet --}}
             @if(!isset($hasPendingApplication) || !$hasPendingApplication)
                 <a href="{{ route('buyer.applySeller') }}" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition">
                     <i class="fas fa-store-alt text-sm"></i><span>Apply Seller</span>

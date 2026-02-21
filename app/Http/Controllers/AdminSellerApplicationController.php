@@ -24,10 +24,21 @@ class AdminSellerApplicationController extends Controller
     // Approve application
     public function approve(SellerApplication $application)
     {
+        $user = $application->user;
+        
+        // Update application status
         $application->update(['status' => 'approved']);
-        // Optionally: assign user role to seller
-        $application->user->update(['role' => 'seller']);
-        return back()->with('success','Seller application approved.');
+        
+        // Add seller role to user's roles JSON array (while keeping buyer role)
+        $user->addRole('seller');
+        
+        // Set current_role to seller so they can start as seller
+        $user->update([
+            'current_role' => 'seller',
+            'role' => 'buyer' // Keep primary role as buyer
+        ]);
+        
+        return back()->with('success','Seller application approved. User can now switch between buyer and seller accounts.');
     }
 
     // Reject application

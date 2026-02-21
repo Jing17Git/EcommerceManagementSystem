@@ -15,6 +15,20 @@
                     <p class="text-sm text-gray-500 mt-0.5">Welcome back, {{ $user->name }}! Here's your store overview.</p>
                 </div>
                 <div class="flex items-center gap-4">
+                    {{-- Switch Account Section - Show if user can switch to buyer --}}
+                    @if(isset($currentRole) && $currentRole !== 'buyer')
+                        <form method="POST" action="{{ route('seller.switchAccount') }}" class="flex items-center">
+                            @csrf
+                            <input type="hidden" name="role" value="buyer">
+                            <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition">
+                                <i class="fas fa-exchange-alt text-sm"></i><span>Switch to Buyer</span>
+                            </button>
+                        </form>
+                    @else
+                        <div class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg">
+                            <i class="fas fa-check-circle text-sm"></i><span>Buyer Account Active</span>
+                        </div>
+                    @endif
                     <button class="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
                         <i class="fas fa-bell text-lg"></i>
                         <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -103,7 +117,7 @@
                         <i class="fas fa-box text-green-600 text-xl"></i>
                     </div>
                     <span class="text-green-600 text-sm font-semibold bg-green-50 px-2 py-1 rounded">
-                        <i class="fas fa-arrow-up mr-1"></i>{{ $stats['productsCount'] > 0 ? '100' : '0' }}%
+                        <i class="fas fa-arrow-up mr-1"></i>{{ $stats['productsCount'] > 0 ? '100' : 0 }}%
                     </span>
                 </div>
                 <h3 class="text-gray-500 text-sm font-medium mb-1">Active Products</h3>
@@ -289,7 +303,7 @@
                 <div class="bg-white rounded-xl border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-bold text-gray-900">Top Products</h3>
-<a href="{{ route('seller.products.index') }}" class="text-sm font-medium text-orange-600 hover:text-orange-700">View All →</a>
+                        <a href="{{ route('seller.products.index') }}" class="text-sm font-medium text-orange-600 hover:text-orange-700">View All →</a>
                     </div>
                     <div class="space-y-4">
                         @forelse($topProducts as $product)

@@ -9,6 +9,7 @@ use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\SwitchAccountController;
 use Illuminate\Support\Facades\Route;
 
 // Public route
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'verified'])->prefix('buyer')->name('buyer.')->group(
     // Seller Application Routes
     Route::get('/apply-seller', [BuyerController::class, 'applySeller'])->name('applySeller');
     Route::post('/submit-seller-application', [BuyerController::class, 'submitSellerApplication'])->name('submitSellerApplication');
+
+    // Switch Account Route
+    Route::post('/switch-account', [SwitchAccountController::class, 'switch'])->name('switchAccount');
 });
 
 
@@ -51,6 +55,9 @@ Route::middleware(['auth', 'verified'])->prefix('seller')->name('seller.')->grou
 
     // Seller Product CRUD (only their own products)
     Route::resource('products', SellerProductController::class)->except(['show']);
+
+    // Switch Account Route
+    Route::post('/switch-account', [SwitchAccountController::class, 'switch'])->name('switchAccount');
 });
 
 

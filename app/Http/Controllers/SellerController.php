@@ -60,12 +60,23 @@ class SellerController extends Controller
             'thisMonthRevenue' => $thisMonthRevenue,
             'pendingReturns' => $pendingReturns,
         ];
+
+        // Get current role (for switching between buyer/seller)
+        $currentRole = $user->getCurrentRoleDisplay();
+        
+        // Check if user has both buyer and seller roles (for switching)
+        // Using the new hasAnyRole method from User model
+        $hasBuyerRole = $user->isBuyer();
+        $hasSellerRole = $user->isSeller();
         
         return view('seller.dashboard', compact(
             'stats',
             'recentOrders',
             'orderStatuses',
-            'topProducts'
+            'topProducts',
+            'currentRole',
+            'hasBuyerRole',
+            'hasSellerRole'
         ));
     }
 
