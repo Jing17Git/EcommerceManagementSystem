@@ -45,6 +45,7 @@
 
             <select id="role" name="role" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                 <option value="" disabled selected>{{ __('Select a role') }}</option>
+                <option value="administrator" {{ old('role') == 'administrator' ? 'selected' : '' }}>{{ __('Administrator') }}</option>
                 <option value="buyer" {{ old('role') == 'buyer' ? 'selected' : '' }}>{{ __('Buyer') }}</option>
                 <option value="seller" {{ old('role') == 'seller' ? 'selected' : '' }}>{{ __('Seller') }}</option>
             </select>
