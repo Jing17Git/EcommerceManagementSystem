@@ -178,7 +178,7 @@ Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('pri
        
 
 require __DIR__.'/auth.php';
- Route::get('/{slug}', function ($slug) {
+ Route::get('/page{slug}', function ($slug) {
     $page = Page::where('slug', $slug)
                 ->where('is_active', true)
                 ->firstOrFail();
