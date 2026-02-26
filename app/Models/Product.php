@@ -77,6 +77,6 @@ class Product extends Model
     // Optional image URL helper
     public function imageUrl()
     {
-        return $this->image ? asset('storage/' . $this->image) : asset('images/no-image.png');
+        return $this->image ? route('product.image', ['path' => $this->image]) : asset('images/no-image.png');
     }
 }

@@ -29,6 +29,22 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'current_role',
+        // Store Profile Fields
+        'store_name',
+        'store_email',
+        'store_description',
+        'store_phone',
+        'store_address',
+        'store_logo',
+        // Business Settings
+        'auto_accept_orders',
+        'low_stock_alerts',
+        'email_notifications',
+        // Shipping Preferences
+        'default_shipping_carrier',
+        'processing_time',
+        'free_shipping_threshold',
     ];
 
     /**
@@ -51,6 +67,11 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'roles' => 'array',
+            'auto_accept_orders' => 'boolean',
+            'low_stock_alerts' => 'boolean',
+            'email_notifications' => 'boolean',
+            'free_shipping_threshold' => 'decimal:2',
         ];
     }
 
@@ -163,6 +184,11 @@ class User extends Authenticatable
      */
     public function canSwitchToRole(string $role): bool
     {
+        // Any authenticated user can switch to buyer mode.
+        if ($role === self::ROLE_BUYER) {
+            return true;
+        }
+
         return $this->hasAnyRole($role);
     }
 }

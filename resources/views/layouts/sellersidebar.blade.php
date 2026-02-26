@@ -66,7 +66,7 @@
                 <span>Dashboard</span>
             </a>
             
-<a href="{{ route('seller.products.index') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('seller.products.index') ? 'active' : '' }}">
+<a href="{{ route('seller.products.index') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('seller.products.*') ? 'active' : '' }}">
                 <i class="fas fa-box"></i>
                 <span>Products</span>
                 <span class="ml-auto bg-orange-100 text-orange-600 text-xs font-semibold px-2 py-0.5 rounded-full">{{ $sidebarStats['productsCount'] }}</span>
@@ -105,12 +105,12 @@
     <!-- User Profile Section -->
     <div class="px-3 py-4 border-t border-gray-200">
         <div class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition">
-            <img src="https://ui-avatars.com/api/?name=John+Seller&background=f97316&color=fff&bold=true" 
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Seller') }}&background=f97316&color=fff&bold=true" 
                  alt="Seller Avatar" 
                  class="w-10 h-10 rounded-full ring-2 ring-orange-100">
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-gray-900 truncate">John's Store</p>
-                <p class="text-xs text-gray-500 truncate">seller@example.com</p>
+                <p class="text-sm font-semibold text-gray-900 truncate">{{ Auth::user()->store_name ?? (Auth::user()->name . "'s Store") }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
             </div>
             <form method="POST" action="{{ route('logout') }}" class="inline">
                 @csrf

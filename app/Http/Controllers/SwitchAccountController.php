@@ -36,7 +36,7 @@ class SwitchAccountController extends Controller
             return redirect()->route('seller.dashboard')->with('success', 'Switched to seller account.');
         }
 
-        return redirect()->route('buyer.dashboard')->with('success', 'Switched to buyer account.');
+        return redirect()->route('welcome')->with('success', 'Switched to buyer account.');
     }
 
     /**

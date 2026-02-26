@@ -17,17 +17,24 @@ class SellerController extends Controller
         $user = Auth::user();
         
         // Get products count for this seller
-        $productsCount = Product::where('user_id', $user->id)->count();
+        $productsCount = Product::where('seller_id', $user->id)->count();
         
-        // Get all orders (for now - in a multi-seller system, we'd need order_items table)
-        $orders = Order::orderBy('created_at', 'desc')->get();
+        // Get seller-owned orders
+        $orders = Order::where('seller_id', $user->id)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
         $ordersCount = $orders->count();
         
         // Calculate revenue (sum of all order amounts)
         $revenue = $orders->sum('total_amount');
         
         // Get recent orders (latest 5)
-        $recentOrders = Order::orderBy('created_at', 'desc')->take(5)->get();
+        $recentOrders = Order::where('seller_id', $user->id)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
         
         // Order status breakdown
         $orderStatuses = [
@@ -39,7 +46,7 @@ class SellerController extends Controller
         ];
         
         // Get top products (seller's products with stock > 0, ordered by created_at)
-        $topProducts = Product::where('user_id', $user->id)
+        $topProducts = Product::where('seller_id', $user->id)
             ->where('is_active', true)
             ->orderBy('created_at', 'desc')
             ->take(3)
@@ -93,7 +100,23 @@ class SellerController extends Controller
      */
     public function orders()
     {
-        return view('seller.orders');
+        $user = Auth::user();
+        $orders = Order::where('seller_id', $user->id)
+            ->with('user')
+            ->latest()
+            ->paginate(10);
+
+        $orderStatuses = [
+            'pending' => Order::where('seller_id', $user->id)->where('status', 'pending')->count(),
+            'processing' => Order::where('seller_id', $user->id)->where('status', 'processing')->count(),
+            'shipped' => Order::where('seller_id', $user->id)->where('status', 'shipped')->count(),
+            'delivered' => Order::where('seller_id', $user->id)->where('status', 'delivered')->count(),
+            'cancelled' => Order::where('seller_id', $user->id)->where('status', 'cancelled')->count(),
+        ];
+
+        $totalOrders = array_sum($orderStatuses);
+
+        return view('seller.orders', compact('orders', 'orderStatuses', 'totalOrders'));
     }
 
     /**
@@ -101,7 +124,60 @@ class SellerController extends Controller
      */
     public function wallet()
     {
-        return view('seller.wallet');
+        $user = Auth::user();
+        $orders = Order::where('seller_id', $user->id)->latest()->get();
+
+        $completedOrders = $orders->whereIn('status', ['shipped', 'delivered']);
+        $pendingOrders = $orders->whereIn('status', ['pending', 'processing']);
+        $cancelledOrders = $orders->where('status', 'cancelled');
+
+        $totalEarnings = (float) $completedOrders->sum('total_amount');
+        $pendingAmount = (float) $pendingOrders->sum('total_amount');
+        $refundedAmount = (float) $cancelledOrders->sum('total_amount');
+        $availableBalance = max($totalEarnings - $refundedAmount, 0);
+
+        $monthlyEarnings = collect(range(5, 0))
+            ->map(function ($monthsAgo) use ($completedOrders) {
+                $month = now()->subMonths($monthsAgo);
+                $monthTotal = (float) $completedOrders
+                    ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+                    ->sum('total_amount');
+
+                return [
+                    'label' => $month->format('M'),
+                    'amount' => round($monthTotal, 2),
+                ];
+            })
+            ->push([
+                'label' => now()->format('M'),
+                'amount' => round((float) $completedOrders
+                    ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+                    ->sum('total_amount'), 2),
+            ]);
+
+        $recentTransactions = $orders->take(10)->map(function ($order) {
+            $isRefund = $order->status === 'cancelled';
+
+            return [
+                'id' => $order->order_number ?? ('ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT)),
+                'type' => $isRefund ? 'Refund' : 'Order Payment',
+                'amount' => (float) $order->total_amount,
+                'status' => $order->status,
+                'date' => $order->created_at,
+            ];
+        });
+
+        return view('seller.wallet', [
+            'walletStats' => [
+                'availableBalance' => $availableBalance,
+                'thisMonthEarnings' => (float) $monthlyEarnings->last()['amount'],
+                'pendingAmount' => $pendingAmount,
+                'refundedAmount' => $refundedAmount,
+                'totalEarnings' => $totalEarnings,
+            ],
+            'monthlyEarnings' => $monthlyEarnings,
+            'recentTransactions' => $recentTransactions,
+        ]);
     }
 
     /**
@@ -109,7 +185,27 @@ class SellerController extends Controller
      */
     public function shipping()
     {
-        return view('seller.shipping');
+        $user = Auth::user();
+        $orders = Order::where('seller_id', $user->id)->latest()->get();
+
+        $totalShipments = $orders->whereNotIn('status', ['cancelled'])->count();
+        $inTransit = $orders->whereIn('status', ['processing', 'shipped'])->count();
+        $delivered = $orders->where('status', 'delivered')->count();
+        $failed = $orders->where('status', 'cancelled')->count();
+
+        $activeShipments = $orders
+            ->whereIn('status', ['processing', 'shipped'])
+            ->take(10);
+
+        return view('seller.shipping', [
+            'shippingStats' => [
+                'totalShipments' => $totalShipments,
+                'inTransit' => $inTransit,
+                'delivered' => $delivered,
+                'failed' => $failed,
+            ],
+            'activeShipments' => $activeShipments,
+        ]);
     }
 
     /**
@@ -117,7 +213,24 @@ class SellerController extends Controller
      */
     public function returns()
     {
-        return view('seller.returns');
+        $user = Auth::user();
+        $returnOrders = Order::where('seller_id', $user->id)
+            ->where('status', 'cancelled')
+            ->latest()
+            ->take(20)
+            ->get();
+
+        $refundAmount = (float) $returnOrders->sum('total_amount');
+
+        return view('seller.returns', [
+            'returnsStats' => [
+                'totalReturns' => $returnOrders->count(),
+                'pending' => 0,
+                'approved' => $returnOrders->count(),
+                'refundedAmount' => $refundAmount,
+            ],
+            'returnRequests' => $returnOrders,
+        ]);
     }
 
     /**
@@ -125,6 +238,37 @@ class SellerController extends Controller
      */
     public function settings()
     {
-        return view('seller.settings');
+        $user = Auth::user();
+        return view('seller.settings', compact('user'));
+    }
+
+    /**
+     * Update seller settings.
+     */
+    public function updateSettings(Request $request)
+    {
+        $user = Auth::user();
+        
+        $validated = $request->validate([
+            // Store Profile Fields
+            'store_name' => 'nullable|string|max:255',
+            'store_email' => 'nullable|email|max:255',
+            'store_description' => 'nullable|string',
+            'store_phone' => 'nullable|string|max:50',
+            'store_address' => 'nullable|string',
+            'store_logo' => 'nullable|string',
+            // Business Settings
+            'auto_accept_orders' => 'required|boolean',
+            'low_stock_alerts' => 'required|boolean',
+            'email_notifications' => 'required|boolean',
+            // Shipping Preferences
+            'default_shipping_carrier' => 'nullable|in:J&T Express,LBC Padala,Flash Express',
+            'processing_time' => 'nullable|in:Same Day,1-2 Business Days,3-5 Business Days,5-7 Business Days',
+            'free_shipping_threshold' => 'nullable|in:0,500,1000,1500,2000',
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('seller.settings')->with('success', 'Settings updated successfully!');
     }
 }

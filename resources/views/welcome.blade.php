@@ -277,7 +277,7 @@
                         <div class="product-card">
                             <div class="product-image-container">
                                 @if($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                                <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}">
                                 @else
                                 <img src="https://via.placeholder.com/300x200?text=Product" alt="{{ $product->name }}">
                                 @endif

@@ -30,11 +30,13 @@ class SidebarComposer
 
         $user = Auth::user();
         
-        // Check user role and provide appropriate stats
-        if ($user->role === 'seller') {
+        $activeRole = $user->current_role ?? ($user->isSeller() ? 'seller' : 'buyer');
+
+        // Check active role and provide appropriate stats
+        if ($activeRole === 'seller' && $user->isSeller()) {
             // Seller stats
-            $productsCount = Product::where('user_id', $user->id)->count();
-            $orders = Order::orderBy('created_at', 'desc')->get();
+            $productsCount = Product::where('seller_id', $user->id)->count();
+            $orders = Order::where('seller_id', $user->id)->orderBy('created_at', 'desc')->get();
             $ordersCount = $orders->count();
             $pendingReturns = $orders->where('status', 'cancelled')->count();
             

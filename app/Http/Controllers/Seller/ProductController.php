@@ -15,10 +15,19 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('seller_id', auth()->id())
+        $products = Product::with('category')
+            ->where('seller_id', auth()->id())
             ->latest()
             ->paginate(10);
-        return view('seller.products', compact('products'));
+
+        $stats = [
+            'total' => Product::where('seller_id', auth()->id())->count(),
+            'active' => Product::where('seller_id', auth()->id())->where('is_active', true)->count(),
+            'lowStock' => Product::where('seller_id', auth()->id())->where('stock', '>', 0)->where('stock', '<=', 5)->count(),
+            'outOfStock' => Product::where('seller_id', auth()->id())->where('stock', '<=', 0)->count(),
+        ];
+
+        return view('seller.products', compact('products', 'stats'));
     }
 
     /**
@@ -35,18 +44,19 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|max:255',
             'category_id' => 'nullable|exists:categories,id',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
-            'is_active' => 'required|boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->all();
+        $data = $validated;
         $data['seller_id'] = auth()->id();
+        $data['is_active'] = $request->boolean('is_active');
 
         // handle image upload
         if ($request->hasFile('image')) {
@@ -83,17 +93,18 @@ class ProductController extends Controller
             abort(403);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|max:255',
             'category_id' => 'nullable|exists:categories,id',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
-            'is_active' => 'required|boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->all();
+        $data = $validated;
+        $data['is_active'] = $request->boolean('is_active');
 
         // handle image upload
         if ($request->hasFile('image')) {
