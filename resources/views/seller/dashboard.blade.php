@@ -1,9 +1,13 @@
 <x-seller-layout>
     @php
         $user = Auth::user();
-        $storeName = $user->name . "'s Store";
+        $storeName = $user->store_name ?: ($user->name . "'s Store");
+        $storeDescription = $user->store_description ?: 'Update your shop profile in Settings to add a store description.';
+        $storeEmail = $user->store_email ?: $user->email;
+        $storePhone = $user->store_phone ?: 'No phone set';
+        $storeAddress = $user->store_address ?: 'No address set';
         $sellerSince = $user->created_at->format('F Y');
-        $customerCount = \App\Models\Order::distinct('user_id')->count('user_id');
+        $customerCount = \App\Models\Order::where('seller_id', $user->id)->distinct('user_id')->count('user_id');
     @endphp
 
     <!-- Top Header Bar -->
@@ -12,7 +16,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-                    <p class="text-sm text-gray-500 mt-0.5">Welcome back, {{ $user->name }}! Here's your store overview.</p>
+                    <p class="text-sm text-gray-500 mt-0.5">Welcome back, {{ $storeName }}! Here's your store overview.</p>
                 </div>
                 <div class="flex items-center gap-4">
                     {{-- Switch Account Section - Show if user can switch to buyer --}}
@@ -52,6 +56,7 @@
                         </span>
                     </div>
                     <p class="text-orange-100 text-lg mb-4">Seller since {{ $sellerSince }}</p>
+                    <p class="text-orange-100 text-sm mb-4 max-w-2xl">{{ $storeDescription }}</p>
                     <div class="flex items-center gap-6">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-star text-yellow-300"></i>
@@ -73,6 +78,11 @@
                 <div class="text-right">
                     <div class="text-orange-100 text-sm mb-2">Store ID</div>
                     <div class="text-2xl font-bold">#SLR-{{ str_pad($user->id, 5, '0', STR_PAD_LEFT) }}</div>
+                    <div class="text-orange-100 text-xs mt-3 space-y-1">
+                        <p>{{ $storeEmail }}</p>
+                        <p>{{ $storePhone }}</p>
+                        <p>{{ $storeAddress }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -240,7 +250,7 @@
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4 text-sm font-medium text-gray-900">#ORD-{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $order->user->name ?? 'Guest' }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">{{ $order->product->name ?? 'Product' }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">{{ $order->order_number ?? ('ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT)) }}</td>
                                 <td class="px-6 py-4 text-sm font-semibold text-gray-900">${{ number_format($order->total_amount, 2) }}</td>
                                 <td class="px-6 py-4">
                                     @if($order->status == 'delivered')

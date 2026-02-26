@@ -1,196 +1,123 @@
 <x-seller-layout>
-    <!-- Top Header Bar -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div class="px-8 py-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
-                    <p class="text-sm text-gray-500 mt-0.5">Manage your store settings and preferences</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button class="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg hover:from-orange-600 hover:to-orange-700 transition shadow-sm">
-                        <i class="fas fa-save mr-2"></i>Save Changes
-                    </button>
-                </div>
-            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+            <p class="text-sm text-gray-500 mt-1">Manage store profile and seller preferences</p>
         </div>
     </header>
 
-    <!-- Settings Content -->
     <main class="p-8">
-        
-        <div class="grid grid-cols-3 gap-6">
-            
-            <!-- Left Sidebar - Settings Navigation -->
-            <div class="col-span-1">
-                <div class="bg-white rounded-xl border border-gray-200 p-4">
-                    <nav class="space-y-1">
-                        <a href="#" class="settings-nav flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 bg-orange-100 text-orange-600">
-                            <i class="fas fa-store w-5"></i>
-                            <span>Store Profile</span>
-                        </a>
-                        <a href="#" class="settings-nav flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-box w-5"></i>
-                            <span>Products</span>
-                        </a>
-                        <a href="#" class="settings-nav flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-truck w-5"></i>
-                            <span>Shipping</span>
-                        </a>
-                        <a href="#" class="settings-nav flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-money-bill-wave w-5"></i>
-                            <span>Payments</span>
-                        </a>
-                        <a href="#" class="settings-nav flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-bell w-5"></i>
-                            <span>Notifications</span>
-                        </a>
-                        <a href="#" class="settings-nav flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-shield-alt w-5"></i>
-                            <span>Security</span>
-                        </a>
-                    </nav>
+        @if(session('success'))
+            <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-700 text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <form action="{{ route('seller.settings.update') }}" method="POST" class="space-y-6 max-w-4xl">
+            @csrf
+            @method('PUT')
+
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4">Store Profile</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Store Name</label>
+                        <input type="text" name="store_name" value="{{ old('store_name', $user->store_name) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        @error('store_name') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Store Email</label>
+                        <input type="email" name="store_email" value="{{ old('store_email', $user->store_email) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        @error('store_email') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Store Description</label>
+                    <textarea name="store_description" rows="4" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">{{ old('store_description', $user->store_description) }}</textarea>
+                    @error('store_description') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Store Phone</label>
+                        <input type="text" name="store_phone" value="{{ old('store_phone', $user->store_phone) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        @error('store_phone') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Store Address</label>
+                        <input type="text" name="store_address" value="{{ old('store_address', $user->store_address) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        @error('store_address') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
 
-            <!-- Right Content - Settings Forms -->
-            <div class="col-span-2 space-y-6">
-                
-                <!-- Store Profile Settings -->
-                <div class="bg-white rounded-xl border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6">Store Profile</h3>
-                    
-                    <div class="grid grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
-                            <input type="text" value="John's Electronics Store" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Store Email</label>
-                            <input type="email" value="seller@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Store Description</label>
-                        <textarea rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">Your trusted source for premium electronics and gadgets. We offer the latest Apple products, accessories, and more.</textarea>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                            <input type="tel" value="+1 (555) 123-4567" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Business Address</label>
-                            <input type="text" value="123 Main Street, New York, NY 10001" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                        </div>
-                    </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4">Business Settings</h2>
+                <div class="space-y-4">
+                    <label class="flex items-center gap-3">
+                        <input type="hidden" name="auto_accept_orders" value="0">
+                        <input type="checkbox" name="auto_accept_orders" value="1" @checked(old('auto_accept_orders', $user->auto_accept_orders)) class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+                        <span class="text-sm text-gray-700">Auto-accept orders</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                        <input type="hidden" name="low_stock_alerts" value="0">
+                        <input type="checkbox" name="low_stock_alerts" value="1" @checked(old('low_stock_alerts', $user->low_stock_alerts)) class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+                        <span class="text-sm text-gray-700">Enable low stock alerts</span>
+                    </label>
+                    <label class="flex items-center gap-3">
+                        <input type="hidden" name="email_notifications" value="0">
+                        <input type="checkbox" name="email_notifications" value="1" @checked(old('email_notifications', $user->email_notifications)) class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+                        <span class="text-sm text-gray-700">Enable email notifications</span>
+                    </label>
                 </div>
-
-                <!-- Business Settings -->
-                <div class="bg-white rounded-xl border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6">Business Settings</h3>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Auto-accept orders</p>
-                                <p class="text-xs text-gray-500">Automatically accept orders without manual review</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                            </label>
-                        </div>
-                        
-                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Low stock alerts</p>
-                                <p class="text-xs text-gray-500">Get notified when products are running low</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                            </label>
-                        </div>
-                        
-                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Email notifications</p>
-                                <p class="text-xs text-gray-500">Receive email updates for orders and returns</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                            </label>
-                        </div>
-                        
-                        <div class="flex items-center justify-between py-3">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Two-factor authentication</p>
-                                <p class="text-xs text-gray-500">Add an extra layer of security to your account</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Shipping Preferences -->
-                <div class="bg-white rounded-xl border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6">Shipping Preferences</h3>
-                    
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Default Shipping Carrier</label>
-                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                                <option>UPS</option>
-                                <option>FedEx</option>
-                                <option>USPS</option>
-                                <option>DHL</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Processing Time</label>
-                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                                <option>Same Day</option>
-                                <option>1-2 Business Days</option>
-                                <option selected>3-5 Business Days</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Free Shipping Threshold</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                            <input type="number" value="100" class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                        </div>
-                        <p class="text-xs text-gray-500 mt-1">Set minimum order amount for free shipping</p>
-                    </div>
-                </div>
-
+                @error('auto_accept_orders') <p class="text-sm text-red-600 mt-2">{{ $message }}</p> @enderror
+                @error('low_stock_alerts') <p class="text-sm text-red-600 mt-2">{{ $message }}</p> @enderror
+                @error('email_notifications') <p class="text-sm text-red-600 mt-2">{{ $message }}</p> @enderror
             </div>
 
-        </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4">Shipping Preferences</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Default Shipping Carrier</label>
+                        <select name="default_shipping_carrier" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                            <option value="">Select Courier</option>
+                            <option value="J&T Express" @selected(old('default_shipping_carrier', $user->default_shipping_carrier) === 'J&T Express')>J&T Express</option>
+                            <option value="LBC Padala" @selected(old('default_shipping_carrier', $user->default_shipping_carrier) === 'LBC Padala')>LBC Padala</option>
+                            <option value="Flash Express" @selected(old('default_shipping_carrier', $user->default_shipping_carrier) === 'Flash Express')>Flash Express</option>
+                        </select>
+                        @error('default_shipping_carrier') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Processing Time</label>
+                        <select name="processing_time" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                            <option value="">Select Processing Time</option>
+                            <option value="Same Day" @selected(old('processing_time', $user->processing_time) === 'Same Day')>Same Day</option>
+                            <option value="1-2 Business Days" @selected(old('processing_time', $user->processing_time) === '1-2 Business Days')>1-2 Business Days</option>
+                            <option value="3-5 Business Days" @selected(old('processing_time', $user->processing_time) === '3-5 Business Days')>3-5 Business Days</option>
+                            <option value="5-7 Business Days" @selected(old('processing_time', $user->processing_time) === '5-7 Business Days')>5-7 Business Days</option>
+                        </select>
+                        @error('processing_time') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Free Shipping Threshold</label>
+                    <select name="free_shipping_threshold" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <option value="">Select Threshold</option>
+                        <option value="0" @selected((string) old('free_shipping_threshold', $user->free_shipping_threshold) === '0')>No minimum (0)</option>
+                        <option value="500" @selected((string) old('free_shipping_threshold', $user->free_shipping_threshold) === '500')>500</option>
+                        <option value="1000" @selected((string) old('free_shipping_threshold', $user->free_shipping_threshold) === '1000')>1000</option>
+                        <option value="1500" @selected((string) old('free_shipping_threshold', $user->free_shipping_threshold) === '1500')>1500</option>
+                        <option value="2000" @selected((string) old('free_shipping_threshold', $user->free_shipping_threshold) === '2000')>2000</option>
+                    </select>
+                    @error('free_shipping_threshold') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
 
+            <div>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition">
+                    Save Changes
+                </button>
+            </div>
+        </form>
     </main>
-
-    <script>
-    // Settings Navigation Active State
-    document.querySelectorAll('.settings-nav').forEach(nav => {
-        nav.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.settings-nav').forEach(n => {
-                n.classList.remove('bg-orange-100', 'text-orange-600');
-                n.classList.add('hover:bg-gray-50');
-            });
-            this.classList.add('bg-orange-100', 'text-orange-600');
-            this.classList.remove('hover:bg-gray-50');
-        });
-    });
-    </script>
 </x-seller-layout>

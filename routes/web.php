@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SwitchAccountController;
+use App\Http\Controllers\ProductImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', fn() => view('welcome'))->name('welcome');
+
+// Product image route (works even without public/storage symlink)
+Route::get('/product-images/{path}', [ProductImageController::class, 'show'])
+    ->where('path', '.*')
+    ->name('product.image');
 
 Route::get('/dashboard', fn() => view('dashboard'))
     ->middleware(['auth', 'verified'])
@@ -57,7 +63,7 @@ Route::middleware(['auth', 'verified'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'verified'])
+Route::middleware(['auth', 'verified', 'seller'])
     ->prefix('seller')
     ->name('seller.')
     ->group(function () {
@@ -68,6 +74,7 @@ Route::middleware(['auth', 'verified'])
         Route::get('/shipping', [SellerController::class, 'shipping'])->name('shipping');
         Route::get('/returns', [SellerController::class, 'returns'])->name('returns');
         Route::get('/settings', [SellerController::class, 'settings'])->name('settings');
+        Route::put('/settings', [SellerController::class, 'updateSettings'])->name('settings.update');
 
         // Seller Products
         Route::resource('products', SellerProductController::class)->except(['show']);
@@ -185,4 +192,3 @@ require __DIR__.'/auth.php';
 
     return view('customer.page.index', compact('page'));
     });
-
