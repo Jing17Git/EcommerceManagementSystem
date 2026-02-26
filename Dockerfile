@@ -2,11 +2,15 @@ FROM dunglas/frankenphp:php8.2-bookworm
 
 WORKDIR /app
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
-git unzip zip curl nodejs npm
+git unzip zip curl nodejs npm \
+libpng-dev libonig-dev libxml2-dev \
+libzip-dev default-mysql-client
 
-# Copy project FIRST
+# Install PHP Extensions
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Copy project
 COPY . .
 
 # Install composer
@@ -17,7 +21,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN npm install
 RUN npm run build
 
-# Only create directories (NO Laravel commands here)
+# Permissions
 RUN mkdir -p storage/framework/sessions \
 storage/framework/views \
 storage/framework/cache \
