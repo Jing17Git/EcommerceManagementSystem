@@ -175,7 +175,10 @@ Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('pri
         Route::get('/sell', fn() => view('customer.sell.index'))->name('sell');
         Route::get('/blog', fn() => view('customer.blog.index'))->name('blog');
         Route::get('/careers', fn() => view('customer.careers.index'))->name('careers');
-        Route::get('/{slug}', function ($slug) {
+       
+
+require __DIR__.'/auth.php';
+ Route::get('/{slug}', function ($slug) {
     $page = Page::where('slug', $slug)
                 ->where('is_active', true)
                 ->firstOrFail();
@@ -183,5 +186,3 @@ Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('pri
     return view('customer.page.index', compact('page'));
     });
 
-
-require __DIR__.'/auth.php';
