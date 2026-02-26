@@ -19,12 +19,17 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        // Register View Composer for seller sidebar
-        View::composer('layouts.sellersidebar', SidebarComposer::class);
-        
-        // Register View Composer for buyer sidebar
-        View::composer('layouts.buyersidebar', SidebarComposer::class);
+   public function boot(): void
+{
+    // Force HTTPS in production
+    if (config('app.env') === 'production') {
+        \URL::forceScheme('https');
     }
+
+    // Register View Composer for seller sidebar
+    View::composer('layouts.sellersidebar', SidebarComposer::class);
+
+    // Register View Composer for buyer sidebar
+    View::composer('layouts.buyersidebar', SidebarComposer::class);
+}
 }
