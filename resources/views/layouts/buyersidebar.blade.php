@@ -185,7 +185,7 @@
             <a href="{{ route('buyer.cart') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('buyer.cart') ? 'active' : '' }}">
                 <i class="fas fa-shopping-cart"></i>
                 <span>Cart</span>
-                <span class="ml-auto bg-green-100 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full">2</span>
+                <span class="ml-auto bg-green-100 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full">{{ $sidebarStats['cartCount'] ?? 0 }}</span>
             </a>
         </div>
 
@@ -222,6 +222,17 @@
         <!-- Account Section -->
         <div class="mb-6">
             <p class="px-3 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Account</p>
+
+            @if(Auth::check() && Auth::user()->canSwitchToRole('seller'))
+                <form method="POST" action="{{ route('buyer.switchAccount') }}" class="mb-1">
+                    @csrf
+                    <input type="hidden" name="role" value="seller">
+                    <button type="submit" class="w-full sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Seller Dashboard</span>
+                    </button>
+                </form>
+            @endif
             
             <a href="{{ route('buyer.settings') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('buyer.settings') ? 'active' : '' }}">
                 <i class="fas fa-user-cog"></i>

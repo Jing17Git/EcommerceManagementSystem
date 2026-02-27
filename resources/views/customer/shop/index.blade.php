@@ -59,9 +59,18 @@
                 <h3 class="text-white font-semibold mb-3 truncate">{{ $product->name }}</h3>
                 <div class="flex items-center justify-between">
                     <span class="text-orange-400 font-bold">₱{{ number_format($product->price, 2) }}</span>
+                    @auth
+                    <form method="POST" action="{{ route('buyer.cart.add', $product) }}">
+                        @csrf
+                        <button type="submit" class="text-xs bg-orange-500/10 text-orange-400 border border-orange-500/20 px-3 py-1.5 rounded-lg hover:bg-orange-500 hover:text-white transition">
+                            Add to Cart
+                        </button>
+                    </form>
+                    @else
                     <a href="{{ route('login') }}" class="text-xs bg-orange-500/10 text-orange-400 border border-orange-500/20 px-3 py-1.5 rounded-lg hover:bg-orange-500 hover:text-white transition">
                         Add to Cart
                     </a>
+                    @endauth
                 </div>
             </div>
         </div>

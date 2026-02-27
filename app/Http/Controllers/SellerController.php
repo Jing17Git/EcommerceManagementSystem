@@ -120,6 +120,42 @@ class SellerController extends Controller
     }
 
     /**
+     * Accept a pending order.
+     */
+    public function acceptOrder(Order $order)
+    {
+        if ($order->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'pending') {
+            return back()->with('error', 'Only pending orders can be accepted.');
+        }
+
+        $order->update(['status' => 'processing']);
+
+        return back()->with('success', 'Order accepted successfully.');
+    }
+
+    /**
+     * Decline a pending order.
+     */
+    public function declineOrder(Order $order)
+    {
+        if ($order->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'pending') {
+            return back()->with('error', 'Only pending orders can be declined.');
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        return back()->with('success', 'Order declined successfully.');
+    }
+
+    /**
      * Show the seller wallet/payments page.
      */
     public function wallet()

@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
 use App\Models\SellerApplication;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -130,6 +132,9 @@ class BuyerController extends Controller
         // Check if user has both buyer and seller roles (for switching) using new User model methods
         $hasBuyerRole = $user->isBuyer();
         $hasSellerRole = $user->isSeller();
+
+        $notifications = $this->buildOrderNotifications($user->id, 8);
+        $notificationCount = $notifications->count();
         
         return view('buyer.dashboard', compact(
             'stats',
@@ -147,7 +152,9 @@ class BuyerController extends Controller
             'sellerApplication',
             'currentRole',
             'hasBuyerRole',
-            'hasSellerRole'
+            'hasSellerRole',
+            'notifications',
+            'notificationCount'
         ));
     }
 
@@ -220,7 +227,44 @@ class BuyerController extends Controller
      */
     public function orders()
     {
-        return view('buyer.orders');
+        $orders = Order::where('user_id', Auth::id())
+            ->with('seller')
+            ->latest()
+            ->paginate(10);
+
+        $notifications = $this->buildOrderNotifications(Auth::id(), 8);
+
+        return view('buyer.orders', compact('orders', 'notifications'));
+    }
+
+    /**
+     * Build buyer order notifications from order statuses.
+     */
+    private function buildOrderNotifications(int $userId, int $limit = 8)
+    {
+        return Order::where('user_id', $userId)
+            ->with('seller')
+            ->orderByDesc('updated_at')
+            ->take($limit)
+            ->get()
+            ->map(function (Order $order) {
+                $orderCode = $order->order_number ?? ('ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT));
+
+                $message = match ($order->status) {
+                    'processing' => "Your order {$orderCode} has been accepted and is now processing.",
+                    'shipped' => "Your order {$orderCode} has been shipped.",
+                    'delivered' => "Your order {$orderCode} has been delivered.",
+                    'cancelled' => "Your order {$orderCode} was declined/cancelled by the seller.",
+                    default => "Your order {$orderCode} has been placed and is pending confirmation.",
+                };
+
+                return [
+                    'order' => $order,
+                    'message' => $message,
+                    'time' => $order->updated_at,
+                    'is_update' => $order->updated_at->gt($order->created_at),
+                ];
+            });
     }
 
     /**
@@ -236,7 +280,147 @@ class BuyerController extends Controller
      */
     public function cart()
     {
-        return view('buyer.cart');
+        $cartItems = Cart::where('user_id', Auth::id())
+            ->with('product.category')
+            ->latest()
+            ->get();
+
+        $subtotal = $cartItems->sum(function ($item) {
+            return (float) $item->product?->price * $item->quantity;
+        });
+
+        return view('buyer.cart', [
+            'cartItems' => $cartItems,
+            'subtotal' => $subtotal,
+            'total' => $subtotal,
+        ]);
+    }
+
+    /**
+     * Add a product to cart.
+     */
+    public function addToCart(Product $product, Request $request)
+    {
+        if (!$product->is_active) {
+            return back()->with('error', 'This product is not available.');
+        }
+
+        $requestedQty = (int) $request->input('quantity', 1);
+        $quantity = max($requestedQty, 1);
+
+        if ($product->stock < $quantity) {
+            return back()->with('error', 'Not enough stock available.');
+        }
+
+        $cartItem = Cart::firstOrNew([
+            'user_id' => Auth::id(),
+            'product_id' => $product->id,
+        ]);
+
+        $newQuantity = ($cartItem->exists ? $cartItem->quantity : 0) + $quantity;
+        if ($newQuantity > $product->stock) {
+            return back()->with('error', 'Quantity exceeds available stock.');
+        }
+
+        $cartItem->quantity = $newQuantity;
+        $cartItem->save();
+
+        return back()->with('success', 'Product added to cart.');
+    }
+
+    /**
+     * Update quantity of a cart item.
+     */
+    public function updateCartItem(Cart $cart, Request $request)
+    {
+        if ($cart->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'quantity' => ['required', 'integer', 'min:1'],
+        ]);
+
+        $product = $cart->product;
+        if (!$product || $product->stock < (int) $validated['quantity']) {
+            return back()->with('error', 'Not enough stock available for this update.');
+        }
+
+        $cart->update([
+            'quantity' => (int) $validated['quantity'],
+        ]);
+
+        return back()->with('success', 'Cart quantity updated.');
+    }
+
+    /**
+     * Remove item from cart.
+     */
+    public function removeCartItem(Cart $cart)
+    {
+        if ($cart->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $cart->delete();
+
+        return back()->with('success', 'Item removed from cart.');
+    }
+
+    /**
+     * Checkout all cart items and create orders.
+     */
+    public function checkout(Request $request)
+    {
+        $validated = $request->validate([
+            'shipping_address' => ['required', 'string', 'max:1000'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $userId = Auth::id();
+        $cartItems = Cart::where('user_id', $userId)
+            ->with('product')
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return back()->with('error', 'Your cart is empty.');
+        }
+
+        try {
+            DB::transaction(function () use ($cartItems, $validated, $userId) {
+                foreach ($cartItems as $item) {
+                    $product = Product::lockForUpdate()->find($item->product_id);
+
+                    if (!$product || !$product->is_active || $product->stock < $item->quantity) {
+                        throw new \RuntimeException("Product {$item->product_id} is unavailable or out of stock.");
+                    }
+
+                    $orderNumber = 'ORD-' . now()->format('YmdHis') . '-' . $item->id;
+                    $total = round((float) $product->price * $item->quantity, 2);
+                    $sellerId = $product->seller_id;
+                    $seller = $sellerId ? User::find($sellerId) : null;
+                    $status = ($seller && $seller->auto_accept_orders) ? 'processing' : 'pending';
+
+                    Order::create([
+                        'user_id' => $userId,
+                        'seller_id' => $sellerId ?? $userId,
+                        'order_number' => $orderNumber,
+                        'total_amount' => $total,
+                        'status' => $status,
+                        'shipping_address' => $validated['shipping_address'],
+                        'notes' => $validated['notes'] ?? null,
+                    ]);
+
+                    $product->decrement('stock', $item->quantity);
+                }
+
+                Cart::where('user_id', $userId)->delete();
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('buyer.orders')->with('success', 'Checkout successful. Your order has been placed.');
     }
 
     /**

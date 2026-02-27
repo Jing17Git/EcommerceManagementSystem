@@ -7,6 +7,18 @@
     </header>
 
     <main class="p-8 space-y-6">
+        @if(session('success'))
+            <div class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div class="bg-white border border-gray-200 rounded-xl p-4">
                 <p class="text-sm text-gray-500">Total</p>
@@ -40,6 +52,7 @@
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Amount</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -63,10 +76,32 @@
                                     <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">{{ ucfirst($order->status) }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-500">{{ $order->created_at->format('M d, Y') }}</td>
+                                <td class="px-4 py-3">
+                                    @if($order->status === 'pending')
+                                        <div class="flex items-center gap-2">
+                                            <form method="POST" action="{{ route('seller.orders.accept', $order) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="px-3 py-1.5 rounded-md bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 transition">
+                                                    Accept
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('seller.orders.decline', $order) }}" onsubmit="return confirm('Decline this order?');">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="px-3 py-1.5 rounded-md bg-red-100 text-red-700 text-xs font-semibold hover:bg-red-200 transition">
+                                                    Decline
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        <span class="text-xs text-gray-400">-</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-6 text-center text-sm text-gray-500">No orders found.</td>
+                                <td colspan="6" class="px-4 py-6 text-center text-sm text-gray-500">No orders found.</td>
                             </tr>
                         @endforelse
                     </tbody>

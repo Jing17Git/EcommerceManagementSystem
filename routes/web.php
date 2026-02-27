@@ -46,6 +46,10 @@ Route::middleware(['auth', 'verified'])
         Route::get('/orders', [BuyerController::class, 'orders'])->name('orders');
         Route::get('/wishlist', [BuyerController::class, 'wishlist'])->name('wishlist');
         Route::get('/cart', [BuyerController::class, 'cart'])->name('cart');
+        Route::post('/cart/add/{product}', [BuyerController::class, 'addToCart'])->name('cart.add');
+        Route::patch('/cart/{cart}', [BuyerController::class, 'updateCartItem'])->name('cart.update');
+        Route::delete('/cart/{cart}', [BuyerController::class, 'removeCartItem'])->name('cart.remove');
+        Route::post('/cart/checkout', [BuyerController::class, 'checkout'])->name('cart.checkout');
         Route::get('/settings', [BuyerController::class, 'settings'])->name('settings');
 
         // Seller Application
@@ -70,6 +74,8 @@ Route::middleware(['auth', 'verified', 'seller'])
 
         Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [SellerController::class, 'orders'])->name('orders');
+        Route::patch('/orders/{order}/accept', [SellerController::class, 'acceptOrder'])->name('orders.accept');
+        Route::patch('/orders/{order}/decline', [SellerController::class, 'declineOrder'])->name('orders.decline');
         Route::get('/wallet', [SellerController::class, 'wallet'])->name('wallet');
         Route::get('/shipping', [SellerController::class, 'shipping'])->name('shipping');
         Route::get('/returns', [SellerController::class, 'returns'])->name('returns');
@@ -170,11 +176,8 @@ Route::prefix('/')
         Route::get('/returns', fn() => view('customer.returns.index'))->name('returns');
         Route::get('/track-order', fn() => view('customer.track order.index'))->name('track.order');
 
-Route::get('/about', fn() => view('customer.about.index'))->name('about');
-
-Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('privacy.policy');
-
-});
+        Route::get('/about', fn() => view('customer.about.index'))->name('about');
+        Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('privacy.policy');
         Route::get('/terms-of-service', fn() => view('customer.terms of service.index'))->name('terms.service');
         Route::get('/cookie-policy', fn() => view('customer.cookie policy.index'))->name('cookie.policy');
 
@@ -182,13 +185,13 @@ Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('pri
         Route::get('/sell', fn() => view('customer.sell.index'))->name('sell');
         Route::get('/blog', fn() => view('customer.blog.index'))->name('blog');
         Route::get('/careers', fn() => view('customer.careers.index'))->name('careers');
-       
+    });
 
 require __DIR__.'/auth.php';
- Route::get('/page{slug}', function ($slug) {
+Route::get('/page/{slug}', function ($slug) {
     $page = Page::where('slug', $slug)
                 ->where('is_active', true)
                 ->firstOrFail();
 
     return view('customer.page.index', compact('page'));
-    });
+})->name('page.show');
