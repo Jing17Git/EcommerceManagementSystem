@@ -38,6 +38,8 @@
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Order</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Customer</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Address</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Carrier</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tracking</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Created</th>
                         </tr>
@@ -53,6 +55,8 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $shipment->user?->name ?? 'Guest' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $shipment->shipping_address ?: 'No address' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700">{{ $shipment->shipping_carrier ?: 'Standard Courier' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700">{{ $shipment->tracking_number ?: '-' }}</td>
                                 <td class="px-4 py-3">
                                     <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">{{ ucfirst($shipment->status) }}</span>
                                 </td>
@@ -60,7 +64,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-6 text-center text-sm text-gray-500">No active shipments.</td>
+                                <td colspan="7" class="px-4 py-6 text-center text-sm text-gray-500">No active shipments.</td>
                             </tr>
                         @endforelse
                     </tbody>

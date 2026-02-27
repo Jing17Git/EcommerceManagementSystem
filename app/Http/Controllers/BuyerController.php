@@ -6,11 +6,15 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Cart;
+use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\ReturnRequest;
 use App\Models\SellerApplication;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class BuyerController extends Controller
 {
@@ -66,19 +70,27 @@ class BuyerController extends Controller
         $categoriesCount = Category::count();
         
         // Get top categories by product count
-        $topCategories = Category::withCount('products')
+        $topCategories = Category::where('is_active', true)
+            ->withCount(['products' => function ($query) {
+                $query->where('is_active', true)->where('stock', '>', 0);
+            }])
+            ->whereHas('products', function ($query) {
+                $query->where('is_active', true)->where('stock', '>', 0);
+            })
             ->orderBy('products_count', 'desc')
             ->take(5)
             ->get();
         
         // Get recently viewed products (from recent orders as proxy)
         $recentlyViewedProducts = Product::where('is_active', true)
+            ->where('stock', '>', 0)
             ->orderBy('created_at', 'desc')
             ->take(4)
             ->get();
         
         // Get recommended products (random active products)
         $recommendedProducts = Product::where('is_active', true)
+            ->where('stock', '>', 0)
             ->inRandomOrder()
             ->take(4)
             ->get();
@@ -228,7 +240,7 @@ class BuyerController extends Controller
     public function orders()
     {
         $orders = Order::where('user_id', Auth::id())
-            ->with('seller')
+            ->with(['seller', 'returnRequest'])
             ->latest()
             ->paginate(10);
 
@@ -238,25 +250,67 @@ class BuyerController extends Controller
     }
 
     /**
+     * Submit a return request for a delivered order.
+     */
+    public function requestReturn(Order $order, Request $request)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'delivered') {
+            return back()->with('error', 'Only delivered orders can be requested for return.');
+        }
+
+        if ($order->returnRequest()->exists()) {
+            return back()->with('error', 'A return request already exists for this order.');
+        }
+
+        $validated = $request->validate([
+            'reason' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        ReturnRequest::create([
+            'order_id' => $order->id,
+            'buyer_id' => Auth::id(),
+            'seller_id' => $order->seller_id,
+            'reason' => $validated['reason'] ?? 'Buyer requested return.',
+            'status' => 'requested',
+        ]);
+
+        return back()->with('success', 'Return request submitted.');
+    }
+
+    /**
      * Build buyer order notifications from order statuses.
      */
     private function buildOrderNotifications(int $userId, int $limit = 8)
     {
         return Order::where('user_id', $userId)
-            ->with('seller')
+            ->with(['seller', 'returnRequest'])
             ->orderByDesc('updated_at')
             ->take($limit)
             ->get()
             ->map(function (Order $order) {
                 $orderCode = $order->order_number ?? ('ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT));
 
-                $message = match ($order->status) {
+                if ($order->returnRequest) {
+                    $message = match ($order->returnRequest->status) {
+                        'requested' => "Return request for {$orderCode} is awaiting seller review.",
+                        'approved' => "Return request for {$orderCode} has been approved.",
+                        'rejected' => "Return request for {$orderCode} was rejected by seller.",
+                        'refunded' => "Return request for {$orderCode} has been refunded.",
+                        default => "Return update for {$orderCode}.",
+                    };
+                } else {
+                    $message = match ($order->status) {
                     'processing' => "Your order {$orderCode} has been accepted and is now processing.",
                     'shipped' => "Your order {$orderCode} has been shipped.",
                     'delivered' => "Your order {$orderCode} has been delivered.",
                     'cancelled' => "Your order {$orderCode} was declined/cancelled by the seller.",
                     default => "Your order {$orderCode} has been placed and is pending confirmation.",
                 };
+                }
 
                 return [
                     'order' => $order,
@@ -388,30 +442,83 @@ class BuyerController extends Controller
 
         try {
             DB::transaction(function () use ($cartItems, $validated, $userId) {
-                foreach ($cartItems as $item) {
-                    $product = Product::lockForUpdate()->find($item->product_id);
+                $groupedItems = $cartItems->groupBy(function ($item) use ($userId) {
+                    return $item->product?->seller_id ?? $userId;
+                });
 
-                    if (!$product || !$product->is_active || $product->stock < $item->quantity) {
-                        throw new \RuntimeException("Product {$item->product_id} is unavailable or out of stock.");
-                    }
-
-                    $orderNumber = 'ORD-' . now()->format('YmdHis') . '-' . $item->id;
-                    $total = round((float) $product->price * $item->quantity, 2);
-                    $sellerId = $product->seller_id;
-                    $seller = $sellerId ? User::find($sellerId) : null;
+                foreach ($groupedItems as $sellerId => $items) {
+                    $sellerId = (int) $sellerId;
+                    $seller = User::find($sellerId);
                     $status = ($seller && $seller->auto_accept_orders) ? 'processing' : 'pending';
 
-                    Order::create([
+                    $validatedItems = [];
+                    $orderTotal = 0;
+
+                    foreach ($items as $item) {
+                        $product = Product::lockForUpdate()->find($item->product_id);
+
+                        if (!$product || !$product->is_active || $product->stock < $item->quantity) {
+                            throw new \RuntimeException("Product {$item->product_id} is unavailable or out of stock.");
+                        }
+
+                        $lineTotal = round((float) $product->price * $item->quantity, 2);
+                        $orderTotal += $lineTotal;
+
+                        $validatedItems[] = [
+                            'product' => $product,
+                            'quantity' => (int) $item->quantity,
+                            'line_total' => $lineTotal,
+                        ];
+                    }
+
+                    do {
+                        $orderNumber = 'ORD-' . now()->format('YmdHis') . '-' . Str::upper(Str::random(6));
+                    } while (Order::where('order_number', $orderNumber)->exists());
+
+                    $order = Order::create([
                         'user_id' => $userId,
-                        'seller_id' => $sellerId ?? $userId,
+                        'seller_id' => $sellerId ?: $userId,
                         'order_number' => $orderNumber,
-                        'total_amount' => $total,
+                        'total_amount' => round($orderTotal, 2),
                         'status' => $status,
                         'shipping_address' => $validated['shipping_address'],
                         'notes' => $validated['notes'] ?? null,
                     ]);
 
-                    $product->decrement('stock', $item->quantity);
+                    foreach ($validatedItems as $entry) {
+                        $product = $entry['product'];
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'product_id' => $product->id,
+                            'product_name' => $product->name,
+                            'unit_price' => (float) $product->price,
+                            'quantity' => $entry['quantity'],
+                            'line_total' => $entry['line_total'],
+                        ]);
+
+                        $product->decrement('stock', $entry['quantity']);
+                    }
+
+                    Payment::create([
+                        'order_id' => $order->id,
+                        'provider' => 'manual',
+                        'reference' => 'PAY-' . now()->format('YmdHis') . '-' . $order->id,
+                        'amount' => round($orderTotal, 2),
+                        'currency' => 'PHP',
+                        'status' => 'captured',
+                        'paid_at' => now(),
+                        'meta' => ['source' => 'checkout'],
+                    ]);
+
+                    $order->statusHistories()->create([
+                        'from_status' => null,
+                        'to_status' => $status,
+                        'note' => $status === 'processing'
+                            ? 'Order placed and auto-accepted by seller settings.'
+                            : 'Order placed and waiting for seller confirmation.',
+                        'changed_by' => $userId,
+                    ]);
                 }
 
                 Cart::where('user_id', $userId)->delete();

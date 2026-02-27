@@ -1,5 +1,6 @@
 <?php
 use App\Models\Page;
+use App\Models\Product;
 use App\Http\Controllers\AdminSellerApplicationController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminCategoryController;
@@ -19,7 +20,16 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn() => view('welcome'))->name('welcome');
+Route::get('/', function () {
+    $featuredProducts = Product::with('category')
+        ->where('is_active', true)
+        ->where('stock', '>', 0)
+        ->latest()
+        ->take(9)
+        ->get();
+
+    return view('welcome', compact('featuredProducts'));
+})->name('welcome');
 
 // Product image route (works even without public/storage symlink)
 Route::get('/product-images/{path}', [ProductImageController::class, 'show'])
@@ -44,6 +54,7 @@ Route::middleware(['auth', 'verified'])
 
         Route::get('/dashboard', [BuyerController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [BuyerController::class, 'orders'])->name('orders');
+        Route::post('/orders/{order}/return-request', [BuyerController::class, 'requestReturn'])->name('orders.returnRequest');
         Route::get('/wishlist', [BuyerController::class, 'wishlist'])->name('wishlist');
         Route::get('/cart', [BuyerController::class, 'cart'])->name('cart');
         Route::post('/cart/add/{product}', [BuyerController::class, 'addToCart'])->name('cart.add');
@@ -74,11 +85,17 @@ Route::middleware(['auth', 'verified', 'seller'])
 
         Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
         Route::get('/orders', [SellerController::class, 'orders'])->name('orders');
+        Route::get('/orders/{order}/receipt', [SellerController::class, 'printReceipt'])->name('orders.receipt');
         Route::patch('/orders/{order}/accept', [SellerController::class, 'acceptOrder'])->name('orders.accept');
         Route::patch('/orders/{order}/decline', [SellerController::class, 'declineOrder'])->name('orders.decline');
+        Route::patch('/orders/{order}/ship', [SellerController::class, 'shipOrder'])->name('orders.ship');
+        Route::patch('/orders/{order}/deliver', [SellerController::class, 'deliverOrder'])->name('orders.deliver');
         Route::get('/wallet', [SellerController::class, 'wallet'])->name('wallet');
         Route::get('/shipping', [SellerController::class, 'shipping'])->name('shipping');
         Route::get('/returns', [SellerController::class, 'returns'])->name('returns');
+        Route::patch('/returns/{returnRequest}/approve', [SellerController::class, 'approveReturn'])->name('returns.approve');
+        Route::patch('/returns/{returnRequest}/reject', [SellerController::class, 'rejectReturn'])->name('returns.reject');
+        Route::patch('/returns/{returnRequest}/refund', [SellerController::class, 'refundReturn'])->name('returns.refund');
         Route::get('/settings', [SellerController::class, 'settings'])->name('settings');
         Route::put('/settings', [SellerController::class, 'updateSettings'])->name('settings.update');
 
@@ -181,7 +198,27 @@ Route::prefix('/')
         Route::get('/terms-of-service', fn() => view('customer.terms of service.index'))->name('terms.service');
         Route::get('/cookie-policy', fn() => view('customer.cookie policy.index'))->name('cookie.policy');
 
-        Route::get('/shop', fn() => view('customer.shop.index'))->name('shop');
+        Route::get('/shop', function (\Illuminate\Http\Request $request) {
+            $categories = \App\Models\Category::where('is_active', true)
+                ->orderBy('name')
+                ->get();
+
+            $selectedCategory = null;
+            $productsQuery = Product::with('category')
+                ->where('is_active', true)
+                ->where('stock', '>', 0);
+
+            if ($request->filled('category')) {
+                $selectedCategory = \App\Models\Category::where('slug', $request->query('category'))->first();
+                if ($selectedCategory) {
+                    $productsQuery->where('category_id', $selectedCategory->id);
+                }
+            }
+
+            $products = $productsQuery->latest()->take(12)->get();
+
+            return view('customer.shop.index', compact('products', 'categories', 'selectedCategory'));
+        })->name('shop');
         Route::get('/sell', fn() => view('customer.sell.index'))->name('sell');
         Route::get('/blog', fn() => view('customer.blog.index'))->name('blog');
         Route::get('/careers', fn() => view('customer.careers.index'))->name('careers');

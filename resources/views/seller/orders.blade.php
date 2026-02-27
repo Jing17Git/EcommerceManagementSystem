@@ -77,8 +77,11 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-500">{{ $order->created_at->format('M d, Y') }}</td>
                                 <td class="px-4 py-3">
-                                    @if($order->status === 'pending')
-                                        <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <a href="{{ route('seller.orders.receipt', $order) }}" target="_blank" class="px-3 py-1.5 rounded-md bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 transition">
+                                            Print
+                                        </a>
+                                        @if($order->status === 'pending')
                                             <form method="POST" action="{{ route('seller.orders.accept', $order) }}">
                                                 @csrf
                                                 @method('PATCH')
@@ -93,10 +96,24 @@
                                                     Decline
                                                 </button>
                                             </form>
-                                        </div>
-                                    @else
-                                        <span class="text-xs text-gray-400">-</span>
-                                    @endif
+                                        @elseif($order->status === 'processing')
+                                            <form method="POST" action="{{ route('seller.orders.ship', $order) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="px-3 py-1.5 rounded-md bg-indigo-100 text-indigo-700 text-xs font-semibold hover:bg-indigo-200 transition">
+                                                    Mark as Shipped
+                                                </button>
+                                            </form>
+                                        @elseif($order->status === 'shipped')
+                                            <form method="POST" action="{{ route('seller.orders.deliver', $order) }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="px-3 py-1.5 rounded-md bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 transition">
+                                                    Mark as Delivered
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

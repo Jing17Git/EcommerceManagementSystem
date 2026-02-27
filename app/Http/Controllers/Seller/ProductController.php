@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -35,7 +36,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
+        $categories = $this->defaultSellerCategories();
         return view('seller.products-create', compact('categories'));
     }
 
@@ -46,7 +47,7 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|max:255',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
@@ -79,7 +80,7 @@ class ProductController extends Controller
             abort(403);
         }
 
-        $categories = Category::all();
+        $categories = $this->defaultSellerCategories();
         return view('seller.products-edit', compact('product', 'categories'));
     }
 
@@ -95,7 +96,7 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|max:255',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
@@ -139,5 +140,31 @@ class ProductController extends Controller
         $product->delete();
 
         return back()->with('success', 'Product deleted successfully.');
+    }
+
+    /**
+     * Ensure the default seller categories exist and return them in fixed order.
+     */
+    private function defaultSellerCategories()
+    {
+        $names = ['Jewelry', 'Home Decor', 'Ceramics', 'Textiles', 'Art & Prints'];
+
+        foreach ($names as $name) {
+            Category::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                [
+                    'name' => $name,
+                    'description' => null,
+                    'is_active' => true,
+                ]
+            );
+        }
+
+        return Category::whereIn('name', $names)
+            ->get()
+            ->sortBy(function ($category) use ($names) {
+                return array_search($category->name, $names, true);
+            })
+            ->values();
     }
 }

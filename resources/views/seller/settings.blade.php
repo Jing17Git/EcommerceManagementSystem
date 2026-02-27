@@ -22,29 +22,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Store Name</label>
-                        <input type="text" name="store_name" value="{{ old('store_name', $user->store_name) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <input type="text" name="store_name" value="{{ old('store_name', $user->store_name) }}" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                         @error('store_name') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Store Email</label>
-                        <input type="email" name="store_email" value="{{ old('store_email', $user->store_email) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <input type="email" name="store_email" value="{{ old('store_email', $user->store_email) }}" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                         @error('store_email') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Store Description</label>
-                    <textarea name="store_description" rows="4" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">{{ old('store_description', $user->store_description) }}</textarea>
+                    <textarea name="store_description" rows="4" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">{{ old('store_description', $user->store_description) }}</textarea>
                     @error('store_description') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Store Phone</label>
-                        <input type="text" name="store_phone" value="{{ old('store_phone', $user->store_phone) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <input type="text" name="store_phone" value="{{ old('store_phone', $user->store_phone) }}" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                         @error('store_phone') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Store Address</label>
-                        <input type="text" name="store_address" value="{{ old('store_address', $user->store_address) }}" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <input type="text" name="store_address" value="{{ old('store_address', $user->store_address) }}" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                         @error('store_address') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Default Shipping Carrier</label>
-                        <select name="default_shipping_carrier" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <select name="default_shipping_carrier" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                             <option value="">Select Courier</option>
                             <option value="J&T Express" @selected(old('default_shipping_carrier', $user->default_shipping_carrier) === 'J&T Express')>J&T Express</option>
                             <option value="LBC Padala" @selected(old('default_shipping_carrier', $user->default_shipping_carrier) === 'LBC Padala')>LBC Padala</option>
@@ -89,7 +89,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Processing Time</label>
-                        <select name="processing_time" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <select name="processing_time" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                             <option value="">Select Processing Time</option>
                             <option value="Same Day" @selected(old('processing_time', $user->processing_time) === 'Same Day')>Same Day</option>
                             <option value="1-2 Business Days" @selected(old('processing_time', $user->processing_time) === '1-2 Business Days')>1-2 Business Days</option>
@@ -101,7 +101,7 @@
                 </div>
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Free Shipping Threshold</label>
-                    <select name="free_shipping_threshold" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                    <select name="free_shipping_threshold" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                         <option value="">Select Threshold</option>
                         <option value="0" @selected((string) old('free_shipping_threshold', $user->free_shipping_threshold) === '0')>No minimum (0)</option>
                         <option value="500" @selected((string) old('free_shipping_threshold', $user->free_shipping_threshold) === '500')>500</option>

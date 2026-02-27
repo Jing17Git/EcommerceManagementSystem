@@ -9,6 +9,9 @@
     @if(session('success'))
         <div class="mb-4 rounded-lg bg-green-600/20 border border-green-500/50 px-4 py-3 text-green-200">{{ session('success') }}</div>
     @endif
+    @if(session('error'))
+        <div class="mb-4 rounded-lg bg-red-600/20 border border-red-500/50 px-4 py-3 text-red-200">{{ session('error') }}</div>
+    @endif
 
     <div class="mb-6 bg-[#1c1e38] border border-white/10 rounded-xl p-5">
         <div class="flex items-center justify-between mb-3">
@@ -44,6 +47,7 @@
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Seller</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Amount</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Status</th>
+                        <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Return</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Date</th>
                     </tr>
                 </thead>
@@ -56,11 +60,28 @@
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 rounded text-xs bg-white/10">{{ ucfirst($order->status) }}</span>
                             </td>
+                            <td class="px-4 py-3">
+                                @if($order->returnRequest)
+                                    <span class="px-2 py-1 rounded text-xs bg-blue-900/30 border border-blue-700 text-blue-200">
+                                        {{ ucfirst($order->returnRequest->status) }}
+                                    </span>
+                                @elseif($order->status === 'delivered')
+                                    <form method="POST" action="{{ route('buyer.orders.returnRequest', $order) }}">
+                                        @csrf
+                                        <input type="hidden" name="reason" value="Buyer requested return from order page.">
+                                        <button type="submit" class="px-2 py-1 rounded text-xs bg-amber-600 hover:bg-amber-500 text-white">
+                                            Request Return
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="text-xs text-gray-400">-</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-gray-300">{{ $order->created_at->format('M d, Y') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-gray-300">No orders yet.</td>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-300">No orders yet.</td>
                         </tr>
                     @endforelse
                 </tbody>

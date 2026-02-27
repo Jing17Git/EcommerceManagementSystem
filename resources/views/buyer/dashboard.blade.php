@@ -282,14 +282,75 @@
                 <div class="mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 mb-5">Shop by Category</h3>
                     <div class="flex gap-3 overflow-x-auto pb-2">
-                        <button class="category-tab active">All Items</button>
+                        <a href="{{ route('shop') }}" class="category-tab active">All Items</a>
                         @forelse($topCategories as $category)
-                        <button class="category-tab">{{ $category->name }}</button>
+                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="category-tab">{{ $category->name }}</a>
                         @empty
-                        <button class="category-tab">Jewelry</button>
-                        <button class="category-tab">Home Decor</button>
-                        <button class="category-tab">Ceramics</button>
-                        <button class="category-tab">Textiles</button>
+                        <a href="{{ route('shop') }}" class="category-tab">Jewelry</a>
+                        <a href="{{ route('shop') }}" class="category-tab">Home Decor</a>
+                        <a href="{{ route('shop') }}" class="category-tab">Ceramics</a>
+                        <a href="{{ route('shop') }}" class="category-tab">Textiles</a>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Recommended Products -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-2xl font-bold text-gray-900">Recommended for You</h3>
+                        <a href="{{ route('shop') }}" class="text-sm font-medium text-orange-600 hover:text-orange-700">View Shop</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        @forelse($recommendedProducts as $product)
+                            <div class="product-card">
+                                <div class="product-image-container">
+                                    <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}">
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-xs text-gray-500 mb-1">{{ $product->category?->name ?? 'Uncategorized' }}</p>
+                                    <h4 class="font-semibold text-gray-900 mb-2 truncate">{{ $product->name }}</h4>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-lg font-bold text-orange-600">PHP {{ number_format((float)$product->price, 2) }}</span>
+                                        <form method="POST" action="{{ route('buyer.cart.add', $product) }}">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1.5 bg-orange-500 text-white text-xs font-semibold rounded-lg hover:bg-orange-600 transition">
+                                                Add to Cart
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="md:col-span-2 bg-white border border-gray-100 rounded-xl p-6 text-center text-gray-500">
+                                No products available yet.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Recently Added Products -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-5">Recently Added</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        @forelse($recentlyViewedProducts as $product)
+                            <div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">
+                                <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="w-20 h-20 object-cover rounded-xl">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-gray-500">{{ $product->category?->name ?? 'Uncategorized' }}</p>
+                                    <p class="font-semibold text-gray-900 truncate">{{ $product->name }}</p>
+                                    <p class="text-sm font-bold text-orange-600 mt-1">PHP {{ number_format((float)$product->price, 2) }}</p>
+                                </div>
+                                <form method="POST" action="{{ route('buyer.cart.add', $product) }}">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-lg hover:bg-orange-200 transition">
+                                        Add
+                                    </button>
+                                </form>
+                            </div>
+                        @empty
+                            <div class="md:col-span-2 bg-white border border-gray-100 rounded-xl p-6 text-center text-gray-500">
+                                No recent products found.
+                            </div>
                         @endforelse
                     </div>
                 </div>

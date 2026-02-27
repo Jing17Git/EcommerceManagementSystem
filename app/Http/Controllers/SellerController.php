@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Product;
+use App\Models\ReturnRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -68,6 +70,12 @@ class SellerController extends Controller
             'pendingReturns' => $pendingReturns,
         ];
 
+        $salesOverview = [
+            '7d' => $this->buildSalesSeries($user->id, 7),
+            '30d' => $this->buildSalesSeries($user->id, 30),
+            '90d' => $this->buildSalesSeries($user->id, 90),
+        ];
+
         // Get current role (for switching between buyer/seller)
         $currentRole = $user->getCurrentRoleDisplay();
         
@@ -81,10 +89,41 @@ class SellerController extends Controller
             'recentOrders',
             'orderStatuses',
             'topProducts',
+            'salesOverview',
             'currentRole',
             'hasBuyerRole',
             'hasSellerRole'
         ));
+    }
+
+    /**
+     * Build sales labels and totals for the selected day range.
+     */
+    private function buildSalesSeries(int $sellerId, int $days): array
+    {
+        $startDate = now()->subDays($days - 1)->startOfDay();
+        $endDate = now()->endOfDay();
+
+        $totalsByDate = Order::where('seller_id', $sellerId)
+            ->whereIn('status', ['processing', 'shipped', 'delivered'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get()
+            ->groupBy(fn ($order) => $order->created_at->toDateString())
+            ->map(fn ($dayOrders) => round((float) $dayOrders->sum('total_amount'), 2));
+
+        $labels = [];
+        $values = [];
+
+        for ($i = 0; $i < $days; $i++) {
+            $date = $startDate->copy()->addDays($i);
+            $labels[] = $days <= 7 ? $date->format('D') : $date->format('M d');
+            $values[] = (float) ($totalsByDate->get($date->toDateString()) ?? 0);
+        }
+
+        return [
+            'labels' => $labels,
+            'values' => $values,
+        ];
     }
 
     /**
@@ -120,21 +159,31 @@ class SellerController extends Controller
     }
 
     /**
-     * Accept a pending order.
+     * Printable receipt view for a seller-owned order.
      */
-    public function acceptOrder(Order $order)
+    public function printReceipt(Order $order)
     {
         if ($order->seller_id !== Auth::id()) {
             abort(403);
         }
 
-        if ($order->status !== 'pending') {
-            return back()->with('error', 'Only pending orders can be accepted.');
-        }
+        $order->load(['user', 'seller', 'items', 'payment']);
 
-        $order->update(['status' => 'processing']);
+        return view('seller.orders-receipt', compact('order'));
+    }
 
-        return back()->with('success', 'Order accepted successfully.');
+    /**
+     * Accept a pending order.
+     */
+    public function acceptOrder(Order $order)
+    {
+        return $this->transitionOrderStatus(
+            $order,
+            'pending',
+            'processing',
+            'Order accepted successfully.',
+            'Seller accepted the order.'
+        );
     }
 
     /**
@@ -142,17 +191,106 @@ class SellerController extends Controller
      */
     public function declineOrder(Order $order)
     {
+        return $this->transitionOrderStatus(
+            $order,
+            'pending',
+            'cancelled',
+            'Order declined successfully.',
+            'Seller declined the order.'
+        );
+    }
+
+    /**
+     * Mark a processing order as shipped.
+     */
+    public function shipOrder(Order $order)
+    {
         if ($order->seller_id !== Auth::id()) {
             abort(403);
         }
 
-        if ($order->status !== 'pending') {
-            return back()->with('error', 'Only pending orders can be declined.');
+        if ($order->status !== 'processing') {
+            return back()->with('error', 'Only processing orders can be marked as shipped.');
         }
 
-        $order->update(['status' => 'cancelled']);
+        $fromStatus = $order->status;
+        $trackingNumber = $order->tracking_number ?: ('TRK-' . now()->format('YmdHis') . '-' . $order->id);
 
-        return back()->with('success', 'Order declined successfully.');
+        $order->update([
+            'status' => 'shipped',
+            'tracking_number' => $trackingNumber,
+            'shipping_carrier' => $order->shipping_carrier ?: (Auth::user()->default_shipping_carrier ?: 'Standard Courier'),
+            'shipped_at' => now(),
+        ]);
+
+        $order->statusHistories()->create([
+            'from_status' => $fromStatus,
+            'to_status' => 'shipped',
+            'note' => "Seller marked the order as shipped. Tracking: {$trackingNumber}",
+            'changed_by' => Auth::id(),
+        ]);
+
+        return back()->with('success', 'Order marked as shipped.');
+    }
+
+    /**
+     * Mark a shipped order as delivered.
+     */
+    public function deliverOrder(Order $order)
+    {
+        if ($order->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'shipped') {
+            return back()->with('error', 'Only shipped orders can be marked as delivered.');
+        }
+
+        $fromStatus = $order->status;
+        $order->update([
+            'status' => 'delivered',
+            'delivered_at' => now(),
+        ]);
+
+        $order->statusHistories()->create([
+            'from_status' => $fromStatus,
+            'to_status' => 'delivered',
+            'note' => 'Seller marked the order as delivered.',
+            'changed_by' => Auth::id(),
+        ]);
+
+        return back()->with('success', 'Order marked as delivered.');
+    }
+
+    /**
+     * Transition order status with ownership and state checks.
+     */
+    private function transitionOrderStatus(
+        Order $order,
+        string $expectedStatus,
+        string $nextStatus,
+        string $successMessage,
+        string $note
+    ) {
+        if ($order->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($order->status !== $expectedStatus) {
+            return back()->with('error', "Only {$expectedStatus} orders can be changed to {$nextStatus}.");
+        }
+
+        $fromStatus = $order->status;
+        $order->update(['status' => $nextStatus]);
+
+        $order->statusHistories()->create([
+            'from_status' => $fromStatus,
+            'to_status' => $nextStatus,
+            'note' => $note,
+            'changed_by' => Auth::id(),
+        ]);
+
+        return back()->with('success', $successMessage);
     }
 
     /**
@@ -161,15 +299,19 @@ class SellerController extends Controller
     public function wallet()
     {
         $user = Auth::user();
-        $orders = Order::where('seller_id', $user->id)->latest()->get();
+        $orders = Order::where('seller_id', $user->id)
+            ->with('returnRequest')
+            ->latest()
+            ->get();
+        $payments = Payment::whereHas('order', fn ($q) => $q->where('seller_id', $user->id))->latest()->get();
+        $refundedReturns = ReturnRequest::where('seller_id', $user->id)->where('status', 'refunded')->get();
 
-        $completedOrders = $orders->whereIn('status', ['shipped', 'delivered']);
+        $completedOrders = $orders->whereIn('status', ['delivered']);
         $pendingOrders = $orders->whereIn('status', ['pending', 'processing']);
-        $cancelledOrders = $orders->where('status', 'cancelled');
 
-        $totalEarnings = (float) $completedOrders->sum('total_amount');
+        $totalEarnings = (float) $payments->where('status', 'captured')->sum('amount');
         $pendingAmount = (float) $pendingOrders->sum('total_amount');
-        $refundedAmount = (float) $cancelledOrders->sum('total_amount');
+        $refundedAmount = (float) $refundedReturns->sum(fn ($return) => (float) $return->order?->total_amount);
         $availableBalance = max($totalEarnings - $refundedAmount, 0);
 
         $monthlyEarnings = collect(range(5, 0))
@@ -192,7 +334,7 @@ class SellerController extends Controller
             ]);
 
         $recentTransactions = $orders->take(10)->map(function ($order) {
-            $isRefund = $order->status === 'cancelled';
+            $isRefund = optional($order->returnRequest)->status === 'refunded';
 
             return [
                 'id' => $order->order_number ?? ('ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT)),
@@ -250,23 +392,111 @@ class SellerController extends Controller
     public function returns()
     {
         $user = Auth::user();
-        $returnOrders = Order::where('seller_id', $user->id)
-            ->where('status', 'cancelled')
+        $returnRequests = ReturnRequest::with(['order', 'buyer'])
+            ->where('seller_id', $user->id)
             ->latest()
             ->take(20)
             ->get();
 
-        $refundAmount = (float) $returnOrders->sum('total_amount');
+        $refundAmount = (float) $returnRequests
+            ->where('status', 'refunded')
+            ->sum(fn ($return) => (float) $return->order?->total_amount);
 
         return view('seller.returns', [
             'returnsStats' => [
-                'totalReturns' => $returnOrders->count(),
-                'pending' => 0,
-                'approved' => $returnOrders->count(),
+                'totalReturns' => $returnRequests->count(),
+                'pending' => $returnRequests->where('status', 'requested')->count(),
+                'approved' => $returnRequests->where('status', 'approved')->count(),
                 'refundedAmount' => $refundAmount,
             ],
-            'returnRequests' => $returnOrders,
+            'returnRequests' => $returnRequests,
         ]);
+    }
+
+    /**
+     * Approve a requested return.
+     */
+    public function approveReturn(ReturnRequest $returnRequest)
+    {
+        if ($returnRequest->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($returnRequest->status !== 'requested') {
+            return back()->with('error', 'Only requested returns can be approved.');
+        }
+
+        $returnRequest->update([
+            'status' => 'approved',
+            'reviewed_at' => now(),
+            'seller_note' => 'Return approved by seller.',
+        ]);
+
+        return back()->with('success', 'Return request approved.');
+    }
+
+    /**
+     * Reject a requested return.
+     */
+    public function rejectReturn(ReturnRequest $returnRequest)
+    {
+        if ($returnRequest->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($returnRequest->status !== 'requested') {
+            return back()->with('error', 'Only requested returns can be rejected.');
+        }
+
+        $returnRequest->update([
+            'status' => 'rejected',
+            'reviewed_at' => now(),
+            'seller_note' => 'Return rejected by seller.',
+        ]);
+
+        return back()->with('success', 'Return request rejected.');
+    }
+
+    /**
+     * Mark an approved return as refunded.
+     */
+    public function refundReturn(ReturnRequest $returnRequest)
+    {
+        if ($returnRequest->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($returnRequest->status !== 'approved') {
+            return back()->with('error', 'Only approved returns can be refunded.');
+        }
+
+        $returnRequest->update([
+            'status' => 'refunded',
+            'refunded_at' => now(),
+            'seller_note' => 'Return refunded.',
+        ]);
+
+        if ($returnRequest->order) {
+            if ($returnRequest->order->payment && $returnRequest->order->payment->status !== 'refunded') {
+                $meta = $returnRequest->order->payment->meta ?? [];
+                $meta['refunded_at'] = now()->toDateTimeString();
+                $meta['refund_source'] = 'seller_returns';
+
+                $returnRequest->order->payment->update([
+                    'status' => 'refunded',
+                    'meta' => $meta,
+                ]);
+            }
+
+            $returnRequest->order->statusHistories()->create([
+                'from_status' => $returnRequest->order->status,
+                'to_status' => $returnRequest->order->status,
+                'note' => 'Order return refunded.',
+                'changed_by' => Auth::id(),
+            ]);
+        }
+
+        return back()->with('success', 'Return marked as refunded.');
     }
 
     /**

@@ -400,19 +400,22 @@
     </main>
 
     <script>
+    const salesOverviewData = @json($salesOverview ?? []);
+
     // Sales Chart
     const salesCtx = document.getElementById('salesChart').getContext('2d');
     const salesGradient = salesCtx.createLinearGradient(0, 0, 0, 300);
     salesGradient.addColorStop(0, 'rgba(249, 115, 22, 0.3)');
     salesGradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
 
-    new Chart(salesCtx, {
+    const defaultSales = salesOverviewData['7d'] ?? { labels: [], values: [] };
+    const salesChart = new Chart(salesCtx, {
         type: 'line',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: defaultSales.labels,
             datasets: [{
                 label: 'Sales',
-                data: [4200, 5100, 4800, 6200, 7100, 5900, 6800],
+                data: defaultSales.values,
                 borderColor: '#f97316',
                 backgroundColor: salesGradient,
                 borderWidth: 3,
@@ -504,12 +507,21 @@
     // Chart Tab Switching
     document.querySelectorAll('.chart-tab').forEach(tab => {
         tab.addEventListener('click', function() {
+            const rangeKey = this.textContent.trim().toLowerCase();
+            const selectedSeries = salesOverviewData[rangeKey];
+
             document.querySelectorAll('.chart-tab').forEach(t => {
                 t.classList.remove('bg-orange-100', 'text-orange-600');
                 t.classList.add('text-gray-600');
             });
             this.classList.add('bg-orange-100', 'text-orange-600');
             this.classList.remove('text-gray-600');
+
+            if (selectedSeries) {
+                salesChart.data.labels = selectedSeries.labels;
+                salesChart.data.datasets[0].data = selectedSeries.values;
+                salesChart.update();
+            }
         });
     });
     </script>

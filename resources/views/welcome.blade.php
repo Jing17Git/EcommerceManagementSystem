@@ -99,8 +99,7 @@
     <!-- Hero Carousel - Trending Header -->
     <div class="hero-carousel mb-10 animate-fade-in relative overflow-hidden rounded-2xl" style="height: 480px; margin-top: 2rem;">
         @php
-            $featuredProducts = \App\Models\Product::where('is_active', true)->where('is_featured', true)->take(3)->get();
-            if ($featuredProducts->isEmpty()) { $featuredProducts = \App\Models\Product::where('is_active', true)->take(3)->get(); }
+            $featuredProducts = ($featuredProducts ?? collect())->take(3);
         @endphp
         
         @forelse($featuredProducts as $index => $product)
