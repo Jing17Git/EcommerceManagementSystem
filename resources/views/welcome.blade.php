@@ -51,7 +51,7 @@
             <i class="fas fa-store text-white text-lg"></i>
         </div>
         <div>
-            <h1 class="text-lg font-bold text-gray-900">Local Works</h1>
+            <h1 class="text-lg font-bold text-gray-900">Hinoban-on Works</h1>
             <p class="text-xs text-gray-500">Support Hinoban-on</p>
         </div>
     </div>
@@ -109,7 +109,7 @@
                 <div class="max-w-xl">
 <span class="trending-badge inline-flex items-center gap-2 bg-amber-400 text-gray-900 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4"><i class="fas fa-fire"></i> @if($index === 0)Trending Now @elseif($index === 1)Featured @else New Arrival @endif</span>
                     <h2 class="display-font text-5xl text-white mb-4 leading-tight font-bold">Discover Unique Handcrafted Treasures</h2>
-                    <p class="text-white/90 text-lg mb-2">Support local artisans and find one-of-a-kind pieces</p>
+                    <p class="text-white/90 text-lg mb-2">Support local Hinoban-on and find one-of-a-kind pieces</p>
                     <p class="display-font text-6xl text-white font-bold mb-8">Shop Now</p>
                     <a href="#" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-50 transition shadow-lg">Browse Collection <i class="fas fa-arrow-right"></i></a>
                 </div>
@@ -147,7 +147,7 @@
     <div class="max-w-7xl mx-auto px-6 mb-10">
                 <!-- Welcome Banner -->
                 <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-8 mb-8 text-white">
-                    <h2 class="display-font text-3xl font-bold mb-3">Welcome to Local Works!</h2>
+                    <h2 class="display-font text-3xl font-bold mb-3">Welcome to ShopHinobaan!</h2>
                     <p class="text-white/90 text-lg mb-4">Discover unique handcrafted treasures from talented local Hinoban-on. Every purchase supports small businesses and keeps traditions alive.</p>
                     <div class="flex flex-wrap gap-4">
                         <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
@@ -189,7 +189,7 @@
 
                 <!-- Why Choose Us -->
                 <div class="mb-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-5">Why Choose Hinoban-on Works?</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-5">Why Choose ShopHinoba-an?</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="feature-card bg-white rounded-xl p-5 border border-gray-100 hover:border-orange-500 hover:shadow-md transition-all">
                             <div class="flex items-start gap-4">
@@ -197,8 +197,8 @@
                                     <i class="fas fa-store text-orange-600 text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900 mb-1">Support Local</h4>
-                                    <p class="text-sm text-gray-500">Every purchase directly supports local artisans and their families.</p>
+                                    <h4 class="font-semibold text-gray-900 mb-1">Support Hinoban-on</h4>
+                                    <p class="text-sm text-gray-500">Every purchase directly supports local Hinoban-on and their families.</p>
                                 </div>
                             </div>
                         </div>
@@ -345,15 +345,7 @@
                 <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Terms of Service</a>
                 <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Cookie Policy</a>
             </div>
-            <div class="flex items-center gap-2">
-                <i class="fas fa-lock text-green-400 text-sm"></i>
-                <span class="text-sm text-gray-400">Secure Payments</span>
-                <div class="flex gap-1 ml-2">
-                    <i class="fab fa-cc-visa text-xl text-white"></i>
-                    <i class="fab fa-cc-mastercard text-xl text-white"></i>
-                    <i class="fab fa-cc-paypal text-xl text-white"></i>
-                </div>
-            </div>
+           
         </div>
     </div>
 </footer>
