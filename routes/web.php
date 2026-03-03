@@ -26,9 +26,10 @@ Route::get('/product-images/{path}', [ProductImageController::class, 'show'])
     ->where('path', '.*')
     ->name('product.image');
 
-Route::get('/dashboard', fn() => view('dashboard'))
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Dashboard route
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 
 /*
@@ -62,26 +63,21 @@ Route::middleware(['auth', 'verified'])
 | Seller Routes
 |--------------------------------------------------------------------------
 */
+Route::middleware(['auth', 'verified', 'seller'])->prefix('seller')->name('seller.')->group(function () {
+    Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
+    Route::get('/orders', [SellerController::class, 'orders'])->name('orders');
+    Route::get('/wallet', [SellerController::class, 'wallet'])->name('wallet');
+    Route::get('/shipping', [SellerController::class, 'shipping'])->name('shipping');
+    Route::get('/returns', [SellerController::class, 'returns'])->name('returns');
+    Route::get('/settings', [SellerController::class, 'settings'])->name('settings');
+    Route::put('/settings', [SellerController::class, 'updateSettings'])->name('settings.update');
 
-Route::middleware(['auth', 'verified', 'seller'])
-    ->prefix('seller')
-    ->name('seller.')
-    ->group(function () {
+    // Seller Products
+    Route::resource('products', SellerProductController::class)->except(['show']);
 
-        Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
-        Route::get('/orders', [SellerController::class, 'orders'])->name('orders');
-        Route::get('/wallet', [SellerController::class, 'wallet'])->name('wallet');
-        Route::get('/shipping', [SellerController::class, 'shipping'])->name('shipping');
-        Route::get('/returns', [SellerController::class, 'returns'])->name('returns');
-        Route::get('/settings', [SellerController::class, 'settings'])->name('settings');
-        Route::put('/settings', [SellerController::class, 'updateSettings'])->name('settings.update');
-
-        // Seller Products
-        Route::resource('products', SellerProductController::class)->except(['show']);
-
-        // Switch Account
-        Route::post('/switch-account', [SwitchAccountController::class, 'switch'])->name('switchAccount');
-    });
+    // Switch Account
+    Route::post('/switch-account', [SwitchAccountController::class, 'switch'])->name('switchAccount');
+});
 
 
 /*
@@ -120,7 +116,8 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('/contacts', [AdminController::class, 'contactsIndex'])->name('contacts.index');
 
         // Pages
-Route::resource('pages', \App\Http\Controllers\Admin\PageController::class);
+        Route::resource('pages', \App\Http\Controllers\Admin\PageController::class);
+
         // Reports
         Route::get('/reports', [AdminController::class, 'reportsIndex'])->name('reports.index');
 
@@ -169,12 +166,8 @@ Route::prefix('/')
         Route::get('/shipping-info', fn() => view('customer.shipping info.index'))->name('shipping.info');
         Route::get('/returns', fn() => view('customer.returns.index'))->name('returns');
         Route::get('/track-order', fn() => view('customer.track order.index'))->name('track.order');
-
-Route::get('/about', fn() => view('customer.about.index'))->name('about');
-
-Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('privacy.policy');
-
-});
+        Route::get('/about', fn() => view('customer.about.index'))->name('about');
+        Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('privacy.policy');
         Route::get('/terms-of-service', fn() => view('customer.terms of service.index'))->name('terms.service');
         Route::get('/cookie-policy', fn() => view('customer.cookie policy.index'))->name('cookie.policy');
 
@@ -182,13 +175,14 @@ Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('pri
         Route::get('/sell', fn() => view('customer.sell.index'))->name('sell');
         Route::get('/blog', fn() => view('customer.blog.index'))->name('blog');
         Route::get('/careers', fn() => view('customer.careers.index'))->name('careers');
-       
+    });
 
 require __DIR__.'/auth.php';
- Route::get('/page{slug}', function ($slug) {
+
+Route::get('/page{slug}', function ($slug) {
     $page = Page::where('slug', $slug)
                 ->where('is_active', true)
                 ->firstOrFail();
 
     return view('customer.page.index', compact('page'));
-    });
+});

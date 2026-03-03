@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Local - Welcome</title>
+    <title>ShopHinoba-an - Welcome</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +52,7 @@
         </div>
         <div>
             <h1 class="text-lg font-bold text-gray-900">Local Works</h1>
-            <p class="text-xs text-gray-500">Support Local Artisans</p>
+            <p class="text-xs text-gray-500">Support Hinoban-on</p>
         </div>
     </div>
 
@@ -72,12 +72,12 @@
                 <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-palette w-4"></i><span>Art & Prints</span></a>
             </div>
         </div>
-        <a href="{{ route('about') }}" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
+        <a href="#" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
             <i class="fas fa-info-circle text-sm"></i><span>About</span>
         </a>
-       <a href="{{ route('contact') }}" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
-    <i class="fas fa-envelope text-sm"></i><span>Contact</span>
-</a>
+        <a href="#" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
+            <i class="fas fa-envelope text-sm"></i><span>Contact</span>
+        </a>
     </nav>
 
     <div class="flex items-center gap-3">
@@ -120,7 +120,7 @@
             <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30 flex items-center px-16">
                 <div class="max-w-xl">
                     <span class="trending-badge inline-flex items-center gap-2 bg-amber-400 text-gray-900 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4"><i class="fas fa-fire"></i>Welcome</span>
-                    <h2 class="display-font text-5xl text-white mb-4 leading-tight font-bold">Support Local Artisans</h2>
+                    <h2 class="display-font text-5xl text-white mb-4 leading-tight font-bold">Support Hinoban-on</h2>
                     <p class="text-white/90 text-lg mb-2">Discover unique handcrafted items</p>
                     <p class="display-font text-6xl text-white font-bold mb-8">Explore</p>
                     <a href="#" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-50 transition shadow-lg">Browse Now <i class="fas fa-arrow-right"></i></a>
@@ -148,7 +148,7 @@
                 <!-- Welcome Banner -->
                 <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-8 mb-8 text-white">
                     <h2 class="display-font text-3xl font-bold mb-3">Welcome to Local Works!</h2>
-                    <p class="text-white/90 text-lg mb-4">Discover unique handcrafted treasures from talented local artisans. Every purchase supports small businesses and keeps traditions alive.</p>
+                    <p class="text-white/90 text-lg mb-4">Discover unique handcrafted treasures from talented local Hinoban-on. Every purchase supports small businesses and keeps traditions alive.</p>
                     <div class="flex flex-wrap gap-4">
                         <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
                             <i class="fas fa-check-circle"></i>
@@ -220,7 +220,7 @@
 
                 <!-- Why Choose Us -->
                 <div class="mb-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-5">Why Choose Local Works?</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-5">Why Choose Hinoban-on Works?</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="feature-card bg-white rounded-xl p-5 border border-gray-100 hover:border-orange-500 hover:shadow-md transition-all">
                             <div class="flex items-start gap-4">
@@ -316,42 +316,37 @@
                         <i class="fas fa-store text-white text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold text-white">Local Works</h1>
-                        <p class="text-xs text-gray-400">Support Local Artisans</p>
+                        <h1 class="text-lg font-bold text-white">Hinoban-on Works</h1>
+                        <p class="text-xs text-gray-400">ShopHinoba-an</p>
                     </div>
                 </div>
-                <p class="text-sm text-gray-300 mb-4">Discover unique handcrafted treasures from local artisans. Every purchase supports small businesses and keeps traditions alive.</p>
-                <div class="flex gap-3">
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-pinterest"></i></a>
-                </div>
+                <p class="text-sm text-gray-300 mb-4">Discover unique handcrafted treasures from Hinoban-on. Every purchase supports small businesses and keeps traditions alive.</p>
+                
             </div>
 
             <!-- Quick Links -->
             <div class="col-span-1">
                 <h4 class="font-semibold text-white mb-4">Quick Links</h4>
                 <ul class="space-y-2">
-                    <li><a href="{{ route('about') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">About Us</a></li>
-<li><a href="{{ route('shop') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Shop Now</a></li>
-<li><a href="{{ route('sell') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Sell on Local Works</a></li>
-<li><a href="{{ route('blog') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Blog</a></li>
-<li><a href="{{ route('careers') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Careers</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">About Us</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Shop Now</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Sell on Hinoban-on Works</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Blog</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Careers</a></li>
                 </ul>
             </div>
 
             <!-- Customer Service -->
-<div class="col-span-1">
-    <h4 class="font-semibold text-white mb-4">Customer Service</h4>
-    <ul class="space-y-2">
-        <li><a href="{{ route('help.center') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Help Center</a></li>
-        <li><a href="{{ route('contact') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Contact Us</a></li>
-        <li><a href="{{ route('shipping.info') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Shipping Info</a></li>
-        <li><a href="{{ route('returns') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Returns & Refunds</a></li>
-        <li><a href="{{ route('track.order') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Track Order</a></li>
-    </ul>
-</div>
+            <div class="col-span-1">
+                <h4 class="font-semibold text-white mb-4">Customer Service</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Help Center</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Contact Us</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Shipping Info</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Returns & Refunds</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Track Order</a></li>
+                </ul>
+            </div>
 
             <!-- Contact Info -->
             <div class="col-span-1">
@@ -359,15 +354,11 @@
                 <ul class="space-y-3">
                     <li class="flex items-start gap-3">
                         <i class="fas fa-map-marker-alt text-orange-500 mt-1"></i>
-                        <span class="text-sm text-gray-300">123 Artisan Street, Manila, Philippines 1001</span>
+                        <span class="text-sm text-gray-300">Municipality of Hinobaan, Negros Occidental, Philippines 6113</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-phone text-orange-500"></i>
                         <span class="text-sm text-gray-300">+63 912 345 6789</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <i class="fas fa-envelope text-orange-500"></i>
-                        <span class="text-sm text-gray-300">support@localworks.ph</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-clock text-orange-500"></i>
@@ -379,11 +370,11 @@
 
         <!-- Bottom Footer -->
         <div class="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p class="text-sm text-gray-400">&copy; {{ date('Y') }} Local Works. All rights reserved.</p>
+            <p class="text-sm text-gray-400">&copy; {{ date('Y') }} Hiniban-on Works. All rights reserved.</p>
             <div class="flex items-center gap-6">
-               <a href="{{ route('privacy.policy') }}" class="text-sm text-gray-400 hover:text-orange-400 transition">Privacy Policy</a>
-<a href="{{ route('terms.service') }}" class="text-sm text-gray-400 hover:text-orange-400 transition">Terms of Service</a>
-<a href="{{ route('cookie.policy') }}" class="text-sm text-gray-400 hover:text-orange-400 transition">Cookie Policy</a>
+                <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Privacy Policy</a>
+                <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Terms of Service</a>
+                <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Cookie Policy</a>
             </div>
             <div class="flex items-center gap-2">
                 <i class="fas fa-lock text-green-400 text-sm"></i>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Local - Buyer Dashboard</title>
+    <title>ShopHinobaan -Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,8 +51,8 @@
             <i class="fas fa-store text-white text-lg"></i>
         </div>
         <div>
-            <h1 class="text-lg font-bold text-gray-900">Local Works</h1>
-            <p class="text-xs text-gray-500">Buyer Dashboard</p>
+            <h1 class="text-lg font-bold text-gray-900">Hinoban-on Works</h1>
+            <p class="text-xs text-gray-500">ShopHinobaan</p>
         </div>
     </div>
 
@@ -194,7 +194,7 @@
                 <div class="max-w-xl">
                     <span class="trending-badge inline-flex items-center gap-2 bg-amber-400 text-gray-900 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4"><i class="fas fa-fire"></i> {{ $index === 0 ? 'Trending Now' : ($index === 1 ? 'Featured' : 'New Arrival') }}</span>
                     <h2 class="display-font text-5xl text-white mb-4 leading-tight font-bold">Discover Unique Handcrafted Treasures</h2>
-                    <p class="text-white/90 text-lg mb-2">Support local artisans and find one-of-a-kind pieces</p>
+                    <p class="text-white/90 text-lg mb-2">Support Hinoban-on and find one-of-a-kind pieces</p>
                     <p class="display-font text-6xl text-white font-bold mb-8">Shop Now</p>
                     <a href="#" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-50 transition shadow-lg">Browse Collection <i class="fas fa-arrow-right"></i></a>
                 </div>
@@ -205,9 +205,9 @@
             <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30 flex items-center px-16">
                 <div class="max-w-xl">
                     <span class="trending-badge inline-flex items-center gap-2 bg-amber-400 text-gray-900 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider mb-4"><i class="fas fa-fire"></i>Welcome</span>
-                    <h2 class="display-font text-5xl text-white mb-4 leading-tight font-bold">Support Local Artisans</h2>
+                    <h2 class="display-font text-5xl text-white mb-4 leading-tight font-bold">Support Hinoban-on</h2>
                     <p class="text-white/90 text-lg mb-2">Discover unique handcrafted items</p>
-                    <p class="display-font text-6xl text-white font-bold mb-8">Explore</p>
+                    <p class="display-font text-6xl text-white font-bold mb-8">ShopHinobaan</p>
                     <a href="#" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-50 transition shadow-lg">Browse Now <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
@@ -353,17 +353,11 @@
                         <i class="fas fa-store text-white text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold text-white">Local Works</h1>
-                        <p class="text-xs text-gray-400">Support Local Artisans</p>
+                        <h1 class="text-lg font-bold text-white">Hinoban-on Works</h1>
+                        <p class="text-xs text-gray-400">Support Hiniban-on</p>
                     </div>
                 </div>
-                <p class="text-sm text-gray-300 mb-4">Discover unique handcrafted treasures from local artisans. Every purchase supports small businesses and keeps traditions alive.</p>
-                <div class="flex gap-3">
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-orange-500 transition"><i class="fab fa-pinterest"></i></a>
-                </div>
+        
             </div>
 
             <!-- Quick Links -->
@@ -372,7 +366,7 @@
                 <ul class="space-y-2">
                     <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">About Us</a></li>
                     <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Shop Now</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Sell on Local Works</a></li>
+                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Sell on Hinoban-on</a></li>
                     <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Blog</a></li>
                     <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Careers</a></li>
                 </ul>
@@ -396,15 +390,11 @@
                 <ul class="space-y-3">
                     <li class="flex items-start gap-3">
                         <i class="fas fa-map-marker-alt text-orange-500 mt-1"></i>
-                        <span class="text-sm text-gray-300">123 Artisan Street, Manila, Philippines 1001</span>
+                        <span class="text-sm text-gray-300">Municipality of Hinoba-an, Negros Occidental, Philippines 6113</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-phone text-orange-500"></i>
                         <span class="text-sm text-gray-300">+63 912 345 6789</span>
-                    </li>
-                    <li class="flex items-center gap-3">
-                        <i class="fas fa-envelope text-orange-500"></i>
-                        <span class="text-sm text-gray-300">support@localworks.ph</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-clock text-orange-500"></i>
@@ -416,7 +406,7 @@
 
         <!-- Bottom Footer -->
         <div class="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p class="text-sm text-gray-400">&copy; {{ date('Y') }} Local Works. All rights reserved.</p>
+            <p class="text-sm text-gray-400">&copy; {{ date('Y') }} Hinoban-on. All rights reserved.</p>
             <div class="flex items-center gap-6">
                 <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Privacy Policy</a>
                 <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Terms of Service</a>
