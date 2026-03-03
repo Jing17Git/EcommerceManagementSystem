@@ -64,13 +64,13 @@
             <button class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
                 <i class="fas fa-th-large text-sm"></i><span>Categories</span><i class="fas fa-chevron-down text-xs"></i>
             </button>
+            @if($categories->count() > 0)
             <div class="dropdown-menu absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2">
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-gem w-4"></i><span>Jewelry</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-couch w-4"></i><span>Home Decor</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-paint-brush w-4"></i><span>Ceramics</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-tshirt w-4"></i><span>Textiles</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-palette w-4"></i><span>Art & Prints</span></a>
+                @foreach($categories as $category)
+                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-folder w-4"></i><span>{{ $category->name }}</span></a>
+                @endforeach
             </div>
+            @endif
         </div>
         <a href="#" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
             <i class="fas fa-info-circle text-sm"></i><span>About</span>
@@ -170,53 +170,22 @@
                 </div>
 
                 <!-- Categories -->
+                @if($categories->count() > 0)
                 <div class="mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 mb-5">Shop by Category</h3>
                     <div class="grid grid-cols-3 gap-4">
+                        @foreach($categories as $category)
                         <a href="#" class="category-card group bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-500 hover:shadow-lg transition-all duration-300 text-center">
                             <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <i class="fas fa-gem text-2xl text-orange-500"></i>
+                                <i class="fas fa-folder text-2xl text-orange-500"></i>
                             </div>
-                            <h4 class="font-semibold text-gray-900 mb-1">Jewelry</h4>
-                            <p class="text-xs text-gray-500">Handcrafted pieces</p>
+                            <h4 class="font-semibold text-gray-900 mb-1">{{ $category->name }}</h4>
+                            <p class="text-xs text-gray-500">{{ $category->products_count ?? 0 }} products</p>
                         </a>
-                        <a href="#" class="category-card group bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-500 hover:shadow-lg transition-all duration-300 text-center">
-                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <i class="fas fa-couch text-2xl text-blue-500"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-900 mb-1">Home Decor</h4>
-                            <p class="text-xs text-gray-500">Unique decorations</p>
-                        </a>
-                        <a href="#" class="category-card group bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-500 hover:shadow-lg transition-all duration-300 text-center">
-                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <i class="fas fa-paint-brush text-2xl text-purple-500"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-900 mb-1">Ceramics</h4>
-                            <p class="text-xs text-gray-500">Pottery & crafts</p>
-                        </a>
-                        <a href="#" class="category-card group bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-500 hover:shadow-lg transition-all duration-300 text-center">
-                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <i class="fas fa-tshirt text-2xl text-green-500"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-900 mb-1">Textiles</h4>
-                            <p class="text-xs text-gray-500">Fabrics & clothing</p>
-                        </a>
-                        <a href="#" class="category-card group bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-500 hover:shadow-lg transition-all duration-300 text-center">
-                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-100 to-rose-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <i class="fas fa-palette text-2xl text-red-500"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-900 mb-1">Art & Prints</h4>
-                            <p class="text-xs text-gray-500">Original artwork</p>
-                        </a>
-                        <a href="#" class="category-card group bg-white rounded-2xl p-6 border border-gray-100 hover:border-orange-500 hover:shadow-lg transition-all duration-300 text-center">
-                            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <i class="fas fa-leaf text-2xl text-indigo-500"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-900 mb-1">Eco Products</h4>
-                            <p class="text-xs text-gray-500">Sustainable items</p>
-                        </a>
+                        @endforeach
                     </div>
                 </div>
+                @endif
 
                 <!-- Why Choose Us -->
                 <div class="mb-8">

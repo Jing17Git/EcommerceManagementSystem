@@ -19,7 +19,13 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn() => view('welcome'))->name('welcome');
+Route::get('/', function () {
+    $categories = \App\Models\Category::where('is_active', true)
+        ->withCount('products')
+        ->orderBy('products_count', 'desc')
+        ->get();
+    return view('welcome', compact('categories'));
+})->name('welcome');
 
 // Product image route (works even without public/storage symlink)
 Route::get('/product-images/{path}', [ProductImageController::class, 'show'])

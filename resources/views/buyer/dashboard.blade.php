@@ -99,13 +99,13 @@
             <button class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
                 <i class="fas fa-th-large text-sm"></i><span>Categories</span><i class="fas fa-chevron-down text-xs"></i>
             </button>
+            @if($topCategories->count() > 0)
             <div class="dropdown-menu absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2">
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-gem w-4"></i><span>Jewelry</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-couch w-4"></i><span>Home Decor</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-paint-brush w-4"></i><span>Ceramics</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-tshirt w-4"></i><span>Textiles</span></a>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-palette w-4"></i><span>Art & Prints</span></a>
+                @foreach($topCategories as $category)
+                <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"><i class="fas fa-folder w-4"></i><span>{{ $category->name }}</span></a>
+                @endforeach
             </div>
+            @endif
         </div>
         <div class="relative dropdown">
             <button class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg">
@@ -260,14 +260,9 @@
                     <h3 class="text-2xl font-bold text-gray-900 mb-5">Shop by Category</h3>
                     <div class="flex gap-3 overflow-x-auto pb-2">
                         <button class="category-tab active">All Items</button>
-                        @forelse($topCategories as $category)
+                        @foreach($topCategories as $category)
                         <button class="category-tab">{{ $category->name }}</button>
-                        @empty
-                        <button class="category-tab">Jewelry</button>
-                        <button class="category-tab">Home Decor</button>
-                        <button class="category-tab">Ceramics</button>
-                        <button class="category-tab">Textiles</button>
-                        @endforelse
+                        @endforeach
                     </div>
                 </div>
             </div>

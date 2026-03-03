@@ -236,31 +236,17 @@
     </nav>
 
     <!-- Footer / User -->
-    <div class="sidebar-footer" x-data="{ open: false }" style="position: relative;">
-        <div class="user-row" @click="open = !open">
+    <div class="sidebar-footer">
+        <div class="user-row">
             <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
             <div class="user-info">
                 <div class="u-name">{{ Auth::user()->name }}</div>
                 <div class="u-role">Administrator</div>
             </div>
-            <div class="chevron">
-                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg>
-            </div>
-        </div>
-        <div x-show="open" @click.away="open = false" class="dd-menu" style="display:none;">
-            <div class="dd-head">
-                <div class="dd-head-name">{{ Auth::user()->name }}</div>
-                <div class="dd-head-email">{{ Auth::user()->email }}</div>
-            </div>
-            <a href="{{ route('profile.edit') }}" class="dd-item">
-                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                Profile Settings
-            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="dd-item danger" style="width:100%;">
-                    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                    Sign out
+                <button type="submit" style="background:none; border:none; cursor:pointer; padding:4px; color:var(--muted); transition:color .15s;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                 </button>
             </form>
         </div>
