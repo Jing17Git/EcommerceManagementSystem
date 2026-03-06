@@ -19,38 +19,39 @@
 
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input id="name" type="text" name="name" value="{{ old('name', $product->name) }}" required class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                    <input id="name" type="text" name="name" value="{{ old('name', $product->name) }}" required class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                     @error('name') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <select id="category_id" name="category_id" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-                        <option value="">Uncategorized</option>
+                    <select id="category_id" name="category_id" required class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
+                        <option value="" disabled>Select category</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }}</option>
                         @endforeach
                     </select>
+                    <p class="text-xs text-gray-500 mt-1">Choose the category where this product belongs.</p>
                     @error('category_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
-                        <input id="price" type="number" step="0.01" min="0" name="price" value="{{ old('price', $product->price) }}" required class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <input id="price" type="number" step="0.01" min="0" name="price" value="{{ old('price', $product->price) }}" required class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                         @error('price') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label for="stock" class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                        <input id="stock" type="number" min="0" name="stock" value="{{ old('stock', $product->stock) }}" required class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                        <input id="stock" type="number" min="0" name="stock" value="{{ old('stock', $product->stock) }}" required class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                         @error('stock') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea id="description" name="description" rows="4" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">{{ old('description', $product->description) }}</textarea>
+                    <textarea id="description" name="description" rows="4" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">{{ old('description', $product->description) }}</textarea>
                     @error('description') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
 
@@ -59,7 +60,7 @@
                     @if($product->image)
                         <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="w-24 h-24 object-cover rounded-lg border border-gray-200">
                     @endif
-                    <input id="image" type="file" name="image" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                    <input id="image" type="file" name="image" class="w-full rounded-lg border-black focus:border-orange-500 focus:ring-orange-500">
                     @error('image') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
 

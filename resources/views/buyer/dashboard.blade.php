@@ -64,25 +64,18 @@
             <i class="fas fa-shopping-bag text-sm"></i><span>My Orders</span>
         </a>
         <a href="{{ route('buyer.cart') }}" class="header-nav-link flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg {{ request()->routeIs('buyer.cart') ? 'active' : '' }}">
-            <i class="fas fa-shopping-cart text-sm"></i><span>Cart</span><span class="bg-green-100 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full"></span>
+            <i class="fas fa-shopping-cart text-sm"></i><span>Cart</span><span class="bg-green-100 text-green-600 text-xs font-semibold px-2 py-0.5 rounded-full">{{ $cartCount ?? 0 }}</span>
         </a>
         
-        {{-- Switch Account Section - Show only if user has approved seller application (admin accepted) --}}
-        @if(isset($hasApprovedApplication) && $hasApprovedApplication)
-            <div class="relative dropdown">
-                <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition">
-                    <i class="fas fa-exchange-alt text-sm"></i><span>Switch Account</span>
+        {{-- One-click switch to seller --}}
+        @if(isset($hasSellerRole) && $hasSellerRole)
+            <form method="POST" action="{{ route('buyer.switchAccount') }}">
+                @csrf
+                <input type="hidden" name="role" value="seller">
+                <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition">
+                    <i class="fas fa-store text-sm"></i><span>Seller Dashboard</span>
                 </button>
-                <div class="dropdown-menu absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2">
-                    <form method="POST" action="{{ route('buyer.switchAccount') }}">
-                        @csrf
-                        <input type="hidden" name="role" value="seller">
-                        <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 w-full">
-                            <i class="fas fa-store text-sm"></i><span>Go to Seller Dashboard</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
+            </form>
         @else
             {{-- Apply Seller Button - Only show if user hasn't applied yet --}}
             @if(!isset($hasPendingApplication) || !$hasPendingApplication)
@@ -127,9 +120,39 @@
             <input type="text" placeholder="Search products..." class="w-64 pl-10 pr-4 py-2 text-sm bg-gray-100 border border-transparent rounded-lg focus:bg-white focus:border-orange-300 focus:outline-none transition">
             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         </div>
-        <button class="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-            <i class="far fa-bell text-lg"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
+        <div class="relative dropdown">
+            <button class="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
+                <i class="far fa-bell text-lg"></i>
+                @if(($notificationCount ?? 0) > 0)
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-semibold flex items-center justify-center">
+                        {{ min($notificationCount, 99) }}
+                    </span>
+                @endif
+            </button>
+            <div class="dropdown-menu absolute top-full right-0 mt-1 w-80 max-h-96 overflow-y-auto bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                <div class="px-4 py-2 border-b border-gray-200">
+                    <p class="text-sm font-semibold text-gray-900">Order Notifications</p>
+                </div>
+                @forelse(($notifications ?? collect()) as $note)
+                    <a href="{{ route('buyer.orders') }}" class="block px-4 py-3 hover:bg-orange-50 transition">
+                        <p class="text-sm text-gray-800">{{ $note['message'] }}</p>
+                        <p class="text-xs text-gray-500 mt-1">
+                            {{ $note['time']->format('M d, Y h:i A') }}
+                            @if($note['is_update'])
+                                <span class="ml-2 text-blue-600">Updated</span>
+                            @else
+                                <span class="ml-2 text-amber-600">New</span>
+                            @endif
+                        </p>
+                    </a>
+                @empty
+                    <div class="px-4 py-3 text-sm text-gray-500">No notifications yet.</div>
+                @endforelse
+                <div class="px-4 py-2 border-t border-gray-200">
+                    <a href="{{ route('buyer.orders') }}" class="text-sm font-medium text-orange-600 hover:text-orange-700">View all orders</a>
+                </div>
+            </div>
+        </div>
         <button class="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
             <i class="far fa-comment-dots text-lg"></i>
         </button>
@@ -259,10 +282,83 @@
                 <div class="mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 mb-5">Shop by Category</h3>
                     <div class="flex gap-3 overflow-x-auto pb-2">
+<<<<<<< HEAD
                         <button class="category-tab active">All Items</button>
                         @foreach($topCategories as $category)
                         <button class="category-tab">{{ $category->name }}</button>
                         @endforeach
+=======
+                        <a href="{{ route('shop') }}" class="category-tab active">All Items</a>
+                        @forelse($topCategories as $category)
+                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="category-tab">{{ $category->name }}</a>
+                        @empty
+                        <a href="{{ route('shop') }}" class="category-tab">Jewelry</a>
+                        <a href="{{ route('shop') }}" class="category-tab">Home Decor</a>
+                        <a href="{{ route('shop') }}" class="category-tab">Ceramics</a>
+                        <a href="{{ route('shop') }}" class="category-tab">Textiles</a>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Recommended Products -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-2xl font-bold text-gray-900">Recommended for You</h3>
+                        <a href="{{ route('shop') }}" class="text-sm font-medium text-orange-600 hover:text-orange-700">View Shop</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        @forelse($recommendedProducts as $product)
+                            <div class="product-card">
+                                <div class="product-image-container">
+                                    <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}">
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-xs text-gray-500 mb-1">{{ $product->category?->name ?? 'Uncategorized' }}</p>
+                                    <h4 class="font-semibold text-gray-900 mb-2 truncate">{{ $product->name }}</h4>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-lg font-bold text-orange-600">PHP {{ number_format((float)$product->price, 2) }}</span>
+                                        <form method="POST" action="{{ route('buyer.cart.add', $product) }}">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1.5 bg-orange-500 text-white text-xs font-semibold rounded-lg hover:bg-orange-600 transition">
+                                                Add to Cart
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="md:col-span-2 bg-white border border-gray-100 rounded-xl p-6 text-center text-gray-500">
+                                No products available yet.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Recently Added Products -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-5">Recently Added</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        @forelse($recentlyViewedProducts as $product)
+                            <div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">
+                                <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="w-20 h-20 object-cover rounded-xl">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-gray-500">{{ $product->category?->name ?? 'Uncategorized' }}</p>
+                                    <p class="font-semibold text-gray-900 truncate">{{ $product->name }}</p>
+                                    <p class="text-sm font-bold text-orange-600 mt-1">PHP {{ number_format((float)$product->price, 2) }}</p>
+                                </div>
+                                <form method="POST" action="{{ route('buyer.cart.add', $product) }}">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1.5 bg-orange-100 text-orange-700 text-xs font-semibold rounded-lg hover:bg-orange-200 transition">
+                                        Add
+                                    </button>
+                                </form>
+                            </div>
+                        @empty
+                            <div class="md:col-span-2 bg-white border border-gray-100 rounded-xl p-6 text-center text-gray-500">
+                                No recent products found.
+                            </div>
+                        @endforelse
+>>>>>>> origin/vince-update
                     </div>
                 </div>
             </div>

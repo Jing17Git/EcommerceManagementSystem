@@ -99,8 +99,7 @@
     <!-- Hero Carousel - Trending Header -->
     <div class="hero-carousel mb-10 animate-fade-in relative overflow-hidden rounded-2xl" style="height: 480px; margin-top: 2rem;">
         @php
-            $featuredProducts = \App\Models\Product::where('is_active', true)->where('is_featured', true)->take(3)->get();
-            if ($featuredProducts->isEmpty()) { $featuredProducts = \App\Models\Product::where('is_active', true)->take(3)->get(); }
+            $featuredProducts = ($featuredProducts ?? collect())->take(3);
         @endphp
         
         @forelse($featuredProducts as $index => $product)
@@ -257,7 +256,14 @@
                                 <p class="text-sm text-gray-500 mb-2 truncate">{{ $product->category->name ?? 'Uncategorized' }}</p>
                                 <div class="flex items-center justify-between">
                                     <span class="text-lg font-bold text-orange-600">₱{{ number_format($product->price, 2) }}</span>
-                                    <button class="px-3 py-1.5 bg-orange-500 text-white text-xs font-semibold rounded-lg hover:bg-orange-600 transition">Add to Cart</button>
+                                    @auth
+                                        <form method="POST" action="{{ route('buyer.cart.add', $product) }}">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1.5 bg-orange-500 text-white text-xs font-semibold rounded-lg hover:bg-orange-600 transition">Add to Cart</button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('login') }}" class="px-3 py-1.5 bg-orange-500 text-white text-xs font-semibold rounded-lg hover:bg-orange-600 transition">Add to Cart</a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>

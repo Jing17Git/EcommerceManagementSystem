@@ -5,6 +5,7 @@ namespace App\Http\View\Composers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -23,6 +24,7 @@ class SidebarComposer
                 'pendingReturns' => 0,
                 'wishlistCount' => 0,
                 'totalSpent' => 0,
+                'cartCount' => 0,
             ];
             $view->with('sidebarStats', $sidebarStats);
             return;
@@ -46,6 +48,7 @@ class SidebarComposer
                 'pendingReturns' => $pendingReturns,
                 'wishlistCount' => 0,
                 'totalSpent' => 0,
+                'cartCount' => 0,
             ];
         } else {
             // Buyer stats
@@ -55,6 +58,7 @@ class SidebarComposer
             
             // Wishlist count (using orders as proxy)
             $wishlistCount = $buyerOrders->count();
+            $cartCount = Cart::where('user_id', $user->id)->sum('quantity');
             
             $sidebarStats = [
                 'productsCount' => 0,
@@ -62,6 +66,7 @@ class SidebarComposer
                 'pendingReturns' => 0,
                 'wishlistCount' => $wishlistCount,
                 'totalSpent' => $totalSpent,
+                'cartCount' => $cartCount,
             ];
         }
 
