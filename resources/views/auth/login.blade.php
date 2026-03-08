@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ShopHinoba-an</title>
+    <title>Login - ShopHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,8 +109,8 @@
                 <i class="fas fa-store text-white text-lg"></i>
             </div>
             <div>
-                <h1 class="text-lg font-bold text-gray-900">Hinoban-on Works</h1>
-                <p class="text-xs text-gray-500">Support Hinoban-on</p>
+                <h1 class="text-lg font-bold text-gray-900">ShopHub</h1>
+                <p class="text-xs text-gray-500">Your Trusted Online Shop</p>
             </div>
         </a>
         <div class="flex items-center gap-3">
@@ -139,18 +139,18 @@
                         <i class="fas fa-store text-white text-2xl"></i>
                     </div>
                     <h2 class="display-font text-3xl font-bold leading-tight mb-3">Welcome Back!</h2>
-                    <p class="text-white/85 text-sm leading-relaxed">Log in to explore unique handcrafted treasures from local Hinoban-on.</p>
+                    <p class="text-white/85 text-sm leading-relaxed">Log in to discover amazing products from trusted sellers.</p>
                 </div>
 
                 <!-- Feature pills -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-3 bg-white/15 backdrop-blur px-4 py-3 rounded-xl border border-white/20">
                         <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-hand-holding-heart text-white text-sm"></i>
+                            <i class="fas fa-store text-white text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold">Support Hinoban-on</p>
-                            <p class="text-xs text-white/70">Every purchase makes a difference</p>
+                            <p class="text-sm font-semibold">Trusted Sellers</p>
+                            <p class="text-xs text-white/70">Verified sellers with quality products</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 bg-white/15 backdrop-blur px-4 py-3 rounded-xl border border-white/20">
@@ -158,8 +158,8 @@
                             <i class="fas fa-medal text-white text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold">100% Handmade Quality</p>
-                            <p class="text-xs text-white/70">Carefully crafted with love</p>
+                            <p class="text-sm font-semibold">Quality Guaranteed</p>
+                            <p class="text-xs text-white/70">Every product is quality checked</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 bg-white/15 backdrop-blur px-4 py-3 rounded-xl border border-white/20">
@@ -167,7 +167,7 @@
                             <i class="fas fa-shipping-fast text-white text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold">Fast Nationwide Shipping</p>
+                            <p class="text-sm font-semibold">Fast Shipping</p>
                             <p class="text-xs text-white/70">Across the Philippines & beyond</p>
                         </div>
                     </div>
@@ -176,7 +176,7 @@
                 <!-- Bottom tag -->
                 <div class="flex items-center gap-2">
                     <i class="fas fa-map-marker-alt text-white/70 text-xs"></i>
-                    <span class="text-xs text-white/70">Municipality of Hinobaan, Negros Occidental</span>
+                    <span class="text-xs text-white/70">Philippines</span>
                 </div>
             </div>
 
@@ -285,7 +285,7 @@
 
                 <!-- Register CTA -->
                 <p class="text-center text-sm text-gray-500">
-                    New to ShopHinoba-an?
+                    New to ShopHub?
                     <a href="{{ route('register') }}" class="font-bold text-orange-500 hover:text-orange-700 transition ml-1">
                         Create an account <i class="fas fa-arrow-right text-xs"></i>
                     </a>
@@ -294,7 +294,7 @@
                 <!-- Back to home -->
                 <div class="mt-6 text-center">
                     <a href="{{ route('welcome') }}" class="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-orange-500 transition">
-                        <i class="fas fa-arrow-left text-xs"></i> Back to ShopHinoba-an
+                        <i class="fas fa-arrow-left text-xs"></i> Back to ShopHub
                     </a>
                 </div>
             </div>
@@ -303,7 +303,7 @@
 
     <!-- Footer note -->
     <footer class="pb-6 text-center">
-        <p class="text-xs text-gray-400">&copy; {{ date('Y') }} Hinoban-on Works. All rights reserved.</p>
+        <p class="text-xs text-gray-400">&copy; {{ date('Y') }} ShopHub. All rights reserved.</p>
     </footer>
 
     <script>

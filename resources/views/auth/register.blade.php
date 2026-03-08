@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - ShopHinoba-an</title>
+    <title>Register - ShopHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -196,8 +196,8 @@
                 <i class="fas fa-store text-white text-lg"></i>
             </div>
             <div>
-                <h1 class="text-lg font-bold text-gray-900">Hinoban-on Works</h1>
-                <p class="text-xs text-gray-500">Support Hinoban-on</p>
+                <h1 class="text-lg font-bold text-gray-900">ShopHub</h1>
+                <p class="text-xs text-gray-500">Your Trusted Online Shop</p>
             </div>
         </a>
         <div class="flex items-center gap-3">
@@ -225,14 +225,14 @@
                         <i class="fas fa-user-plus text-white text-2xl"></i>
                     </div>
                     <h2 class="display-font text-3xl font-bold leading-tight mb-3">Join Our Community!</h2>
-                    <p class="text-white/85 text-sm leading-relaxed">Create your account and start discovering unique handcrafted treasures from Hinoban-on.</p>
+                    <p class="text-white/85 text-sm leading-relaxed">Create your account and start discovering amazing products from trusted sellers.</p>
                 </div>
 
                 <!-- Stats -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20 text-center">
                         <p class="text-2xl font-bold"></p>
-                        <p class="text-xs text-white/70 mt-1">Hinoban-on</p>
+                        <p class="text-xs text-white/70 mt-1">Trusted Sellers</p>
                     </div>
                     <div class="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20 text-center">
                         <p class="text-2xl font-bold"></p>
@@ -266,7 +266,7 @@
 
                 <div class="flex items-center gap-2">
                     <i class="fas fa-map-marker-alt text-white/70 text-xs"></i>
-                    <span class="text-xs text-white/70">Municipality of Hinobaan, Negros Occidental</span>
+                    <span class="text-xs text-white/70">Philippines</span>
                 </div>
             </div>
 
@@ -279,7 +279,7 @@
                         <i class="fas fa-shield-alt text-xs"></i> Free Registration
                     </div>
                     <h2 class="display-font text-3xl font-bold text-gray-900 mb-1">Create your account</h2>
-                    <p class="text-sm text-gray-500">Join thousands of buyers and sellers in Hinobaan</p>
+                    <p class="text-sm text-gray-500">Join thousands of buyers and sellers on ShopHub</p>
                 </div>
 
                 <!-- Form -->
@@ -360,7 +360,7 @@
                 <!-- Back to home -->
                 <div class="mt-5 text-center">
                     <a href="#" class="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-orange-500 transition">
-                        <i class="fas fa-arrow-left text-xs"></i> Back to ShopHinoba-an
+                        <i class="fas fa-arrow-left text-xs"></i> Back to ShopHub
                     </a>
                 </div>
             </div>
@@ -368,7 +368,7 @@
     </main>
 
     <footer class="pb-6 text-center">
-        <p class="text-xs text-gray-400">&copy; 2025 Hinoban-on Works. All rights reserved.</p>
+        <p class="text-xs text-gray-400">&copy; {{ date('Y') }} ShopHub. All rights reserved.</p>
     </footer>
 
     <script>
