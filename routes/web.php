@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Page;
 use App\Models\Product;
 use App\Http\Controllers\AdminSellerApplicationController;
