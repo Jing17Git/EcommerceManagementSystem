@@ -33,27 +33,21 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string', 'in:administrator,buyer,seller'],
         ]);
 
+        // All new users are registered as buyers by default
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => 'buyer',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        // Redirect based on user role
-        if ($user->role === 'seller') {
-            return redirect(route('seller.dashboard'));
-        } elseif ($user->role === 'administrator') {
-            return redirect(route('admin.dashboard'));
-        }
-
-        return redirect(route('dashboard', absolute: false));
+        // Redirect to buyer dashboard after registration
+        return redirect(route('buyer.dashboard'));
     }
 }
