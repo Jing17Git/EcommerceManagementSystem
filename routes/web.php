@@ -23,11 +23,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
 
+    // Get active categories with product counts
     $categories = \App\Models\Category::where('is_active', true)
         ->withCount('products')
         ->orderBy('products_count', 'desc')
         ->get();
 
+    // Get featured products
     $featuredProducts = Product::with('category')
         ->where('is_active', true)
         ->where('stock', '>', 0)
@@ -35,7 +37,80 @@ Route::get('/', function () {
         ->take(9)
         ->get();
 
-    return view('welcome', compact('categories','featuredProducts'));
+    // Get statistics for visualization
+    $totalProducts = Product::where('is_active', true)->count();
+    $totalCategories = Category::where('is_active', true)->count();
+    $totalOrders = \App\Models\Order::count();
+    $totalSellers = \App\Models\User::where('role', 'seller')->count();
+    $totalRevenue = \App\Models\Order::where('status', '!=', 'cancelled')->sum('total_amount');
+
+    // Get category distribution for pie chart
+    $categoryDistribution = Category::where('is_active', true)
+        ->withCount(['products' => function ($query) {
+            $query->where('is_active', true);
+        }])
+        ->whereHas('products', function ($query) {
+            $query->where('is_active', true);
+        })
+        ->orderBy('products_count', 'desc')
+        ->take(6)
+        ->get();
+
+    // Get monthly sales data for chart (last 6 months)
+    $monthlySales = [];
+    $monthlyLabels = [];
+    for ($i = 5; $i >= 0; $i--) {
+        $month = now()->subMonths($i);
+        $monthLabel = $month->format('M');
+        $monthStart = $month->startOfMonth();
+        $monthEnd = $month->endOfMonth();
+        
+        $sales = \App\Models\Order::where('status', '!=', 'cancelled')
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->sum('total_amount');
+        
+        $orderCount = \App\Models\Order::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+        
+        $monthlyLabels[] = $monthLabel;
+        $monthlySales[] = [
+            'revenue' => $sales,
+            'orders' => $orderCount
+        ];
+    }
+
+    // Get recent orders for activity feed
+    $recentOrders = \App\Models\Order::with('user')
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+
+    // Get top selling products (based on order items)
+    $topSellingProducts = \App\Models\Product::with('category')
+        ->where('is_active', true)
+        ->where('stock', '>', 0)
+        ->withCount(['orderItems' => function ($query) {
+            $query->whereHas('order', function ($q) {
+                $q->where('status', '!=', 'cancelled');
+            });
+        }])
+        ->orderBy('order_items_count', 'desc')
+        ->take(5)
+        ->get();
+
+    return view('welcome', compact(
+        'categories',
+        'featuredProducts',
+        'totalProducts',
+        'totalCategories',
+        'totalOrders',
+        'totalSellers',
+        'totalRevenue',
+        'categoryDistribution',
+        'monthlySales',
+        'monthlyLabels',
+        'recentOrders',
+        'topSellingProducts'
+    ));
 
 })->name('welcome');
 

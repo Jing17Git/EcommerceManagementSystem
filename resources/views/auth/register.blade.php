@@ -225,25 +225,25 @@
                         <i class="fas fa-user-plus text-white text-2xl"></i>
                     </div>
                     <h2 class="display-font text-3xl font-bold leading-tight mb-3">Join Our Community!</h2>
-                    <p class="text-white/85 text-sm leading-relaxed">Create your account and start discovering unique handcrafted treasures from Hinoban-on artisans.</p>
+                    <p class="text-white/85 text-sm leading-relaxed">Create your account and start discovering unique handcrafted treasures from Hinoban-on.</p>
                 </div>
 
                 <!-- Stats -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20 text-center">
-                        <p class="text-2xl font-bold">500+</p>
-                        <p class="text-xs text-white/70 mt-1">Local Artisans</p>
+                        <p class="text-2xl font-bold"></p>
+                        <p class="text-xs text-white/70 mt-1">Hinoban-on</p>
                     </div>
                     <div class="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20 text-center">
-                        <p class="text-2xl font-bold">2k+</p>
+                        <p class="text-2xl font-bold"></p>
                         <p class="text-xs text-white/70 mt-1">Happy Buyers</p>
                     </div>
                     <div class="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20 text-center">
-                        <p class="text-2xl font-bold">1k+</p>
+                        <p class="text-2xl font-bold"></p>
                         <p class="text-xs text-white/70 mt-1">Products Listed</p>
                     </div>
                     <div class="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20 text-center">
-                        <p class="text-2xl font-bold">4.9★</p>
+                        <p class="text-2xl font-bold"></p>
                         <p class="text-xs text-white/70 mt-1">Avg. Rating</p>
                     </div>
                 </div>
