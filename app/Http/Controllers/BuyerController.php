@@ -113,6 +113,49 @@ class BuyerController extends Controller
             $monthlySpending[] = $spending;
         }
         
+        // Get order status counts for pie chart
+        $orderStatusCounts = [
+            'delivered' => $orders->where('status', 'delivered')->count(),
+            'processing' => $orders->where('status', 'processing')->count(),
+            'pending' => $orders->where('status', 'pending')->count(),
+            'shipped' => $orders->where('status', 'shipped')->count(),
+            'cancelled' => $orders->where('status', 'cancelled')->count(),
+        ];
+        
+        // Get weekly spending for the last 4 weeks
+        $weeklySpending = [];
+        $weeklyLabels = [];
+        for ($i = 3; $i >= 0; $i--) {
+            $weekStart = now()->subWeeks($i)->startOfWeek();
+            $weekEnd = now()->subWeeks($i)->endOfWeek();
+            $weekLabel = 'Week ' . (4 - $i);
+            
+            $spending = Order::where('user_id', $user->id)
+                ->where('status', '!=', 'cancelled')
+                ->whereBetween('created_at', [$weekStart, $weekEnd])
+                ->sum('total_amount');
+            
+            $weeklyLabels[] = $weekLabel;
+            $weeklySpending[] = $spending;
+        }
+        
+        // Get category distribution from user's order history
+        $orderItems = OrderItem::whereHas('order', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->with('product.category')->get();
+        
+        $categoryPurchaseData = [];
+        foreach ($orderItems as $item) {
+            $categoryName = $item->product->category->name ?? 'Other';
+            if (!isset($categoryPurchaseData[$categoryName])) {
+                $categoryPurchaseData[$categoryName] = 0;
+            }
+            $categoryPurchaseData[$categoryName] += $item->quantity;
+        }
+        
+        $purchaseCategoryLabels = array_keys($categoryPurchaseData);
+        $purchaseCategoryData = array_values($categoryPurchaseData);
+        
         // Store stats for sidebar
         $stats = [
             'ordersCount' => $ordersCount,
@@ -166,7 +209,12 @@ class BuyerController extends Controller
             'hasBuyerRole',
             'hasSellerRole',
             'notifications',
-            'notificationCount'
+            'notificationCount',
+            'orderStatusCounts',
+            'weeklySpending',
+            'weeklyLabels',
+            'purchaseCategoryLabels',
+            'purchaseCategoryData'
         ));
     }
 

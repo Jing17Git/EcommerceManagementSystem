@@ -139,7 +139,7 @@
                         <i class="fas fa-store text-white text-2xl"></i>
                     </div>
                     <h2 class="display-font text-3xl font-bold leading-tight mb-3">Welcome Back!</h2>
-                    <p class="text-white/85 text-sm leading-relaxed">Log in to explore unique handcrafted treasures from local Hinoban-on artisans.</p>
+                    <p class="text-white/85 text-sm leading-relaxed">Log in to explore unique handcrafted treasures from local Hinoban-on.</p>
                 </div>
 
                 <!-- Feature pills -->
@@ -149,7 +149,7 @@
                             <i class="fas fa-hand-holding-heart text-white text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold">Support Local Artisans</p>
+                            <p class="text-sm font-semibold">Support Hinoban-on</p>
                             <p class="text-xs text-white/70">Every purchase makes a difference</p>
                         </div>
                     </div>
