@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\PageContentController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\CookieConsentController;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Product;
@@ -120,7 +123,7 @@ Route::get('/product-images/{path}', [ProductImageController::class, 'show'])
     ->name('product.image');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('buyer.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -217,7 +220,14 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('/users', [AdminController::class, 'usersIndex'])->name('users.index');
         Route::get('/contacts', [AdminController::class, 'contactsIndex'])->name('contacts.index');
 
-        Route::resource('pages', \App\Http\Controllers\Admin\PageController::class);
+        Route::resource('pages', PageController::class);
+        
+        Route::get('/page-contents', [PageContentController::class, 'index'])->name('page-contents.index');
+        Route::get('/page-contents/{page}/edit', [PageContentController::class, 'edit'])->name('page-contents.edit');
+        Route::put('/page-contents/{page}', [PageContentController::class, 'update'])->name('page-contents.update');
+        
+        Route::get('/cookie-consent', [CookieConsentController::class, 'edit'])->name('cookie-consent.edit');
+        Route::put('/cookie-consent', [CookieConsentController::class, 'update'])->name('cookie-consent.update');
 
         Route::get('/reports', [AdminController::class, 'reportsIndex'])->name('reports.index');
         Route::get('/logs', [AdminController::class, 'logsIndex'])->name('logs.index');

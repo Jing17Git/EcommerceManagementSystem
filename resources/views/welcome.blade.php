@@ -356,6 +356,63 @@
     </div>
 </footer>
 
+<!-- Cookie Consent Popup -->
+@php
+    $cookieConsent = \App\Models\CookieConsent::first();
+@endphp
+@if($cookieConsent && $cookieConsent->is_enabled)
+<div id="cookieConsent" class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 z-50 transform transition-all duration-300" style="display: none;">
+    <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-cookie-bite text-orange-600 text-2xl"></i>
+        </div>
+        <div class="flex-1">
+            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $cookieConsent->title }}</h3>
+            <p class="text-sm text-gray-600 mb-4">{{ $cookieConsent->message }}</p>
+            <div class="flex gap-3">
+                <button onclick="acceptCookies()" class="px-4 py-2 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600 transition">
+                    {{ $cookieConsent->accept_button_text }}
+                </button>
+                <button onclick="declineCookies()" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-300 transition">
+                    {{ $cookieConsent->decline_button_text }}
+                </button>
+            </div>
+        </div>
+        <button onclick="closeCookieConsent()" class="text-gray-400 hover:text-gray-600 transition">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+@endif
+
+<script>
+    // Cookie Consent
+    function checkCookieConsent() {
+        const consent = localStorage.getItem('cookieConsent');
+        if (!consent) {
+            setTimeout(() => {
+                document.getElementById('cookieConsent').style.display = 'block';
+            }, 1000);
+        }
+    }
+
+    function acceptCookies() {
+        localStorage.setItem('cookieConsent', 'accepted');
+        document.getElementById('cookieConsent').style.display = 'none';
+    }
+
+    function declineCookies() {
+        localStorage.setItem('cookieConsent', 'declined');
+        document.getElementById('cookieConsent').style.display = 'none';
+    }
+
+    function closeCookieConsent() {
+        document.getElementById('cookieConsent').style.display = 'none';
+    }
+
+    // Check on page load
+    checkCookieConsent();
+
 <script>
     // Carousel
     let currentSlide = 0;
