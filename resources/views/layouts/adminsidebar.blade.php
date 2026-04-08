@@ -37,6 +37,7 @@
         padding: 20px 18px 16px;
         border-bottom: 1px solid var(--border);
         flex-shrink: 0;
+        overflow: hidden;
     }
 
     .brand-icon {
@@ -46,8 +47,24 @@
         box-shadow: 0 2px 8px rgba(249,115,22,.3); flex-shrink: 0;
     }
     .brand-icon svg { width: 18px; height: 18px; stroke: #fff; fill: none; }
-    .brand-name  { font-size: 14.5px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; }
-    .brand-sub   { font-size: 10.5px; color: var(--muted); font-weight: 500; }
+    .brand-name  { 
+        font-size: 13px; 
+        font-weight: 700; 
+        color: var(--txt); 
+        letter-spacing: -.02em; 
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px;
+    }
+    .brand-sub   { 
+        font-size: 10px; 
+        color: var(--muted); 
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
     .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; scrollbar-width: none; }
     .sidebar-nav::-webkit-scrollbar { display: none; }
@@ -205,6 +222,14 @@
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
             Orders
         </a>
+        <a href="{{ route('admin.payment-methods.index') }}" class="nav-link {{ request()->routeIs('admin.payment-methods.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            Payment Methods
+        </a>
+        <a href="{{ route('admin.payment-history.index') }}" class="nav-link {{ request()->routeIs('admin.payment-history.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            Payment History
+        </a>
         <a href="{{ route('admin.sellers.index') }}" class="nav-link {{ request()->routeIs('admin.sellers.*') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Sellers Management
@@ -220,9 +245,21 @@
             Messages
         </a>
 
-        <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
-            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-            Pages
+        <a href="{{ route('admin.page-contents.index') }}" class="nav-link {{ request()->routeIs('admin.page-contents.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            Page Content
+        </a>
+        <a href="{{ route('admin.cookie-consent.edit') }}" class="nav-link {{ request()->routeIs('admin.cookie-consent.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Cookie Consent
+        </a>
+        <a href="{{ route('admin.anomaly-detection.index') }}" class="nav-link {{ request()->routeIs('admin.anomaly-detection.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            Anomaly Detection
+        </a>
+        <a href="{{ route('admin.login-security.index') }}" class="nav-link {{ request()->routeIs('admin.login-security.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Login Security
         </a>
         <a href="{{ route('admin.reports.index') }}" class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>

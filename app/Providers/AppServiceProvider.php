@@ -5,6 +5,9 @@ namespace App\Providers;
 use App\Http\View\Composers\SidebarComposer;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Auth\Events\Login;
+use App\Listeners\DetectLoginAnomaly;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,5 +34,8 @@ class AppServiceProvider extends ServiceProvider
 
     // Register View Composer for buyer sidebar
     View::composer('layouts.buyersidebar', SidebarComposer::class);
+    
+    // Register event listeners for anomaly detection
+    Event::listen(Login::class, DetectLoginAnomaly::class);
 }
 }

@@ -8,12 +8,15 @@ use App\Models\Category;
 use App\Models\Cart;
 use App\Models\OrderItem;
 use App\Models\Payment;
+use App\Models\PaymentMethod;
+use App\Models\SellerPaymentMethod;
 use App\Models\ReturnRequest;
 use App\Models\SellerApplication;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BuyerController extends Controller
@@ -383,7 +386,7 @@ class BuyerController extends Controller
     public function cart()
     {
         $cartItems = Cart::where('user_id', Auth::id())
-            ->with('product.category')
+            ->with('product.category', 'product.seller')
             ->latest()
             ->get();
 
@@ -391,10 +394,27 @@ class BuyerController extends Controller
             return (float) $item->product?->price * $item->quantity;
         });
 
+        // Group cart items by seller
+        $itemsBySeller = $cartItems->groupBy(function ($item) {
+            return $item->product?->seller_id ?? 0;
+        });
+
+        // Get payment methods for each seller
+        $sellerPaymentMethods = [];
+        foreach ($itemsBySeller as $sellerId => $items) {
+            if ($sellerId > 0) {
+                $sellerPaymentMethods[$sellerId] = SellerPaymentMethod::where('seller_id', $sellerId)
+                    ->where('is_active', true)
+                    ->get();
+            }
+        }
+
         return view('buyer.cart', [
             'cartItems' => $cartItems,
             'subtotal' => $subtotal,
             'total' => $subtotal,
+            'itemsBySeller' => $itemsBySeller,
+            'sellerPaymentMethods' => $sellerPaymentMethods,
         ]);
     }
 
@@ -477,6 +497,8 @@ class BuyerController extends Controller
         $validated = $request->validate([
             'shipping_address' => ['required', 'string', 'max:1000'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'seller_payment_method_id' => ['required', 'exists:seller_payment_methods,id'],
+            'payment_proof' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
         $userId = Auth::id();
@@ -488,8 +510,15 @@ class BuyerController extends Controller
             return back()->with('error', 'Your cart is empty.');
         }
 
+        $sellerPaymentMethod = SellerPaymentMethod::findOrFail($validated['seller_payment_method_id']);
+        $paymentProofPath = null;
+
+        if ($request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
+        }
+
         try {
-            DB::transaction(function () use ($cartItems, $validated, $userId) {
+            DB::transaction(function () use ($cartItems, $validated, $userId, $sellerPaymentMethod, $paymentProofPath) {
                 $groupedItems = $cartItems->groupBy(function ($item) use ($userId) {
                     return $item->product?->seller_id ?? $userId;
                 });
@@ -523,14 +552,24 @@ class BuyerController extends Controller
                         $orderNumber = 'ORD-' . now()->format('YmdHis') . '-' . Str::upper(Str::random(6));
                     } while (Order::where('order_number', $orderNumber)->exists());
 
+                    // Calculate platform fee and seller amount
+                    $commissionRate = $seller->commission_rate ?? 5.00; // Default 5%
+                    $platformFee = round($orderTotal * ($commissionRate / 100), 2);
+                    $sellerAmount = round($orderTotal - $platformFee, 2);
+
                     $order = Order::create([
                         'user_id' => $userId,
                         'seller_id' => $sellerId ?: $userId,
                         'order_number' => $orderNumber,
                         'total_amount' => round($orderTotal, 2),
+                        'platform_fee' => $platformFee,
+                        'seller_amount' => $sellerAmount,
+                        'commission_rate' => $commissionRate,
                         'status' => $status,
                         'shipping_address' => $validated['shipping_address'],
                         'notes' => $validated['notes'] ?? null,
+                        'payment_method' => $sellerPaymentMethod->method_type . ' - ' . $sellerPaymentMethod->account_name,
+                        'payment_proof' => $paymentProofPath,
                     ]);
 
                     foreach ($validatedItems as $entry) {
@@ -550,13 +589,20 @@ class BuyerController extends Controller
 
                     Payment::create([
                         'order_id' => $order->id,
-                        'provider' => 'manual',
+                        'provider' => $sellerPaymentMethod->method_type,
                         'reference' => 'PAY-' . now()->format('YmdHis') . '-' . $order->id,
                         'amount' => round($orderTotal, 2),
                         'currency' => 'PHP',
-                        'status' => 'captured',
-                        'paid_at' => now(),
-                        'meta' => ['source' => 'checkout'],
+                        'status' => 'initiated',
+                        'paid_at' => null,
+                        'meta' => [
+                            'source' => 'checkout',
+                            'payment_method' => $sellerPaymentMethod->method_type,
+                            'seller_payment_method_id' => $sellerPaymentMethod->id,
+                            'account_name' => $sellerPaymentMethod->account_name,
+                            'account_number' => $sellerPaymentMethod->account_number,
+                            'payment_proof' => $paymentProofPath,
+                        ],
                     ]);
 
                     $order->statusHistories()->create([
