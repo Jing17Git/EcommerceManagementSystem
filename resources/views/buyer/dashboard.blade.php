@@ -371,8 +371,8 @@
                         <i class="fas fa-store text-white text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold text-white">ShopHub</h1>
-                        <p class="text-xs text-gray-400">Your Trusted Online Shop</p>
+                        <h1 class="text-lg font-bold text-white">{{ \App\Models\PageContent::get('footer', 'company', 'name', 'ShopHub') }}</h1>
+                        <p class="text-xs text-gray-400">{{ \App\Models\PageContent::get('footer', 'company', 'tagline', 'Your Trusted Online Shop') }}</p>
                     </div>
                 </div>
         
@@ -382,11 +382,9 @@
             <div class="col-span-1">
                 <h4 class="font-semibold text-white mb-4">Quick Links</h4>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">About Us</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Shop Now</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Sell on ShopHub</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Blog</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Careers</a></li>
+                    <li><a href="{{ route('about') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">About Us</a></li>
+                    <li><a href="{{ route('shop') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Shop Now</a></li>
+                    <li><a href="{{ route('sell') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Sell on ShopHub</a></li>
                 </ul>
             </div>
 
@@ -394,11 +392,11 @@
             <div class="col-span-1">
                 <h4 class="font-semibold text-white mb-4">Customer Service</h4>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Help Center</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Contact Us</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Shipping Info</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Returns & Refunds</a></li>
-                    <li><a href="#" class="text-sm text-gray-300 hover:text-orange-400 transition">Track Order</a></li>
+                    <li><a href="{{ route('help.center') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Help Center</a></li>
+                    <li><a href="{{ route('contact') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Contact Us</a></li>
+                    <li><a href="{{ route('shipping.info') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Shipping Info</a></li>
+                    <li><a href="{{ route('returns') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Returns & Refunds</a></li>
+                    <li><a href="{{ route('track.order') }}" class="text-sm text-gray-300 hover:text-orange-400 transition">Track Order</a></li>
                 </ul>
             </div>
 
@@ -408,15 +406,15 @@
                 <ul class="space-y-3">
                     <li class="flex items-start gap-3">
                         <i class="fas fa-map-marker-alt text-orange-500 mt-1"></i>
-                        <span class="text-sm text-gray-300">Municipality of Hinoba-an, Negros Occidental, Philippines 6113</span>
+                        <span class="text-sm text-gray-300">{{ \App\Models\PageContent::get('footer', 'contact', 'address', 'Municipality of Hinoba-an, Negros Occidental, Philippines 6113') }}</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-phone text-orange-500"></i>
-                        <span class="text-sm text-gray-300">+63 912 345 6789</span>
+                        <span class="text-sm text-gray-300">{{ \App\Models\PageContent::get('footer', 'contact', 'phone', '+63 912 345 6789') }}</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-clock text-orange-500"></i>
-                        <span class="text-sm text-gray-300">Mon - Sat: 9AM - 7PM</span>
+                        <span class="text-sm text-gray-300">{{ \App\Models\PageContent::get('footer', 'contact', 'hours', 'Mon - Sat: 9AM - 7PM') }}</span>
                     </li>
                 </ul>
             </div>
@@ -424,11 +422,11 @@
 
         <!-- Bottom Footer -->
         <div class="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p class="text-sm text-gray-400">&copy; {{ date('Y') }} ShopHub. All rights reserved.</p>
+            <p class="text-sm text-gray-400">&copy; {{ date('Y') }} {{ \App\Models\PageContent::get('footer', 'company', 'name', 'ShopHub') }}. All rights reserved.</p>
             <div class="flex items-center gap-6">
-                <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Privacy Policy</a>
-                <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Terms of Service</a>
-                <a href="#" class="text-sm text-gray-400 hover:text-orange-400 transition">Cookie Policy</a>
+                <a href="{{ route('privacy.policy') }}" class="text-sm text-gray-400 hover:text-orange-400 transition">Privacy Policy</a>
+                <a href="{{ route('terms.service') }}" class="text-sm text-gray-400 hover:text-orange-400 transition">Terms of Service</a>
+                <a href="{{ route('cookie.policy') }}" class="text-sm text-gray-400 hover:text-orange-400 transition">Cookie Policy</a>
             </div>
             <div class="flex items-center gap-2">
                 <i class="fas fa-lock text-green-400 text-sm"></i>

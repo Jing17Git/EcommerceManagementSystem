@@ -270,6 +270,20 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('/')->group(function () {
 
+    Route::get('/about', fn() => view('customer.about.index'))->name('about');
+    
+    Route::get('/shop', function () {
+        $categories = \App\Models\Category::where('is_active', true)->get();
+        $products = \App\Models\Product::with('category')
+            ->where('is_active', true)
+            ->where('stock', '>', 0)
+            ->latest()
+            ->get();
+        return view('customer.shop.index', compact('categories', 'products'));
+    })->name('shop');
+    
+    Route::get('/sell', fn() => view('customer.sell.index'))->name('sell');
+
     Route::get('/help-center', fn() => view('customer.help center.index'))->name('help.center');
     Route::get('/contact', fn() => view('customer.contact.index'))->name('contact');
 
@@ -289,7 +303,6 @@ Route::prefix('/')->group(function () {
     Route::get('/returns', fn() => view('customer.returns.index'))->name('returns');
     Route::get('/track-order', fn() => view('customer.track order.index'))->name('track.order');
 
-    Route::get('/about', fn() => view('customer.about.index'))->name('about');
     Route::get('/privacy-policy', fn() => view('customer.privacy.index'))->name('privacy.policy');
     Route::get('/terms-of-service', fn() => view('customer.terms of service.index'))->name('terms.service');
     Route::get('/cookie-policy', fn() => view('customer.cookie policy.index'))->name('cookie.policy');
