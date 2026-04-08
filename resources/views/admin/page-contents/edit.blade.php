@@ -258,15 +258,109 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-2">Description</label>
-                        <textarea name="contents[company][description]" rows="3" class="w-full px-3 py-2 border rounded">{{ $contents->get('company')?->firstWhere('key', 'description')?->value ?? 'Discover quality products from trusted sellers.' }}</textarea>
+                        <textarea name="contents[company][description]" rows="3" class="w-full px-3 py-2 border rounded">{{ $contents->get('company')?->firstWhere('key', 'description')?->value ?? 'Discover quality products from trusted sellers. Every purchase comes with our satisfaction guarantee.' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links Section -->
+            <div class="mb-8 p-4 border rounded">
+                <h3 class="text-lg font-semibold mb-4">Quick Links Section</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Section Title</label>
+                        <input type="text" name="contents[quick_links][title]" value="{{ $contents->get('quick_links')?->firstWhere('key', 'title')?->value ?? 'Quick Links' }}" class="w-full px-3 py-2 border rounded">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 1 Text</label>
+                            <input type="text" name="contents[quick_links][link1_text]" value="{{ $contents->get('quick_links')?->firstWhere('key', 'link1_text')?->value ?? 'About Us' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 1 URL</label>
+                            <input type="text" name="contents[quick_links][link1_url]" value="{{ $contents->get('quick_links')?->firstWhere('key', 'link1_url')?->value ?? '/about' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 2 Text</label>
+                            <input type="text" name="contents[quick_links][link2_text]" value="{{ $contents->get('quick_links')?->firstWhere('key', 'link2_text')?->value ?? 'Shop Now' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 2 URL</label>
+                            <input type="text" name="contents[quick_links][link2_url]" value="{{ $contents->get('quick_links')?->firstWhere('key', 'link2_url')?->value ?? '/shop' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 3 Text</label>
+                            <input type="text" name="contents[quick_links][link3_text]" value="{{ $contents->get('quick_links')?->firstWhere('key', 'link3_text')?->value ?? 'Sell on ShopHub' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 3 URL</label>
+                            <input type="text" name="contents[quick_links][link3_url]" value="{{ $contents->get('quick_links')?->firstWhere('key', 'link3_url')?->value ?? '/sell' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Service Section -->
+            <div class="mb-8 p-4 border rounded">
+                <h3 class="text-lg font-semibold mb-4">Customer Service Section</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Section Title</label>
+                        <input type="text" name="contents[customer_service][title]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'title')?->value ?? 'Customer Service' }}" class="w-full px-3 py-2 border rounded">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 1 Text</label>
+                            <input type="text" name="contents[customer_service][link1_text]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link1_text')?->value ?? 'Help Center' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 1 URL</label>
+                            <input type="text" name="contents[customer_service][link1_url]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link1_url')?->value ?? '/help-center' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 2 Text</label>
+                            <input type="text" name="contents[customer_service][link2_text]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link2_text')?->value ?? 'Contact Us' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 2 URL</label>
+                            <input type="text" name="contents[customer_service][link2_url]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link2_url')?->value ?? '/contact' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 3 Text</label>
+                            <input type="text" name="contents[customer_service][link3_text]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link3_text')?->value ?? 'Shipping Info' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 3 URL</label>
+                            <input type="text" name="contents[customer_service][link3_url]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link3_url')?->value ?? '/shipping-info' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 4 Text</label>
+                            <input type="text" name="contents[customer_service][link4_text]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link4_text')?->value ?? 'Returns & Refunds' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 4 URL</label>
+                            <input type="text" name="contents[customer_service][link4_url]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link4_url')?->value ?? '/returns' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 5 Text</label>
+                            <input type="text" name="contents[customer_service][link5_text]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link5_text')?->value ?? 'Track Order' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Link 5 URL</label>
+                            <input type="text" name="contents[customer_service][link5_url]" value="{{ $contents->get('customer_service')?->firstWhere('key', 'link5_url')?->value ?? '/track-order' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Contact Info -->
             <div class="mb-8 p-4 border rounded">
-                <h3 class="text-lg font-semibold mb-4">Contact Information</h3>
+                <h3 class="text-lg font-semibold mb-4">Contact Information Section</h3>
                 <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Section Title</label>
+                        <input type="text" name="contents[contact][title]" value="{{ $contents->get('contact')?->firstWhere('key', 'title')?->value ?? 'Contact Us' }}" class="w-full px-3 py-2 border rounded">
+                    </div>
                     <div>
                         <label class="block text-sm font-medium mb-2">Address</label>
                         <input type="text" name="contents[contact][address]" value="{{ $contents->get('contact')?->firstWhere('key', 'address')?->value ?? 'Philippines' }}" class="w-full px-3 py-2 border rounded">
@@ -282,21 +376,69 @@
                 </div>
             </div>
 
-            <!-- Social Links -->
+            <!-- Legal Links Section -->
             <div class="mb-8 p-4 border rounded">
-                <h3 class="text-lg font-semibold mb-4">Social Media Links</h3>
+                <h3 class="text-lg font-semibold mb-4">Legal Links (Bottom Footer)</h3>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Legal Link 1 Text</label>
+                            <input type="text" name="contents[legal][link1_text]" value="{{ $contents->get('legal')?->firstWhere('key', 'link1_text')?->value ?? 'Privacy Policy' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Legal Link 1 URL</label>
+                            <input type="text" name="contents[legal][link1_url]" value="{{ $contents->get('legal')?->firstWhere('key', 'link1_url')?->value ?? '/privacy-policy' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Legal Link 2 Text</label>
+                            <input type="text" name="contents[legal][link2_text]" value="{{ $contents->get('legal')?->firstWhere('key', 'link2_text')?->value ?? 'Terms of Service' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Legal Link 2 URL</label>
+                            <input type="text" name="contents[legal][link2_url]" value="{{ $contents->get('legal')?->firstWhere('key', 'link2_url')?->value ?? '/terms-of-service' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Legal Link 3 Text</label>
+                            <input type="text" name="contents[legal][link3_text]" value="{{ $contents->get('legal')?->firstWhere('key', 'link3_text')?->value ?? 'Cookie Policy' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Legal Link 3 URL</label>
+                            <input type="text" name="contents[legal][link3_url]" value="{{ $contents->get('legal')?->firstWhere('key', 'link3_url')?->value ?? '/cookie-policy' }}" class="w-full px-3 py-2 border rounded">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright Section -->
+            <div class="mb-8 p-4 border rounded">
+                <h3 class="text-lg font-semibold mb-4">Copyright & Footer Text</h3>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium mb-2">Facebook URL</label>
-                        <input type="text" name="contents[social][facebook]" value="{{ $contents->get('social')?->firstWhere('key', 'facebook')?->value ?? '#' }}" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-sm font-medium mb-2">Copyright Text (use {year} for current year, {company} for company name)</label>
+                        <input type="text" name="contents[copyright][text]" value="{{ $contents->get('copyright')?->firstWhere('key', 'text')?->value ?? '© {year} {company}. All rights reserved.' }}" class="w-full px-3 py-2 border rounded">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="mb-8 p-4 border rounded">
+                <h3 class="text-lg font-semibold mb-4">Social Media Links (Optional)</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Facebook URL (leave empty to hide)</label>
+                        <input type="text" name="contents[social][facebook]" value="{{ $contents->get('social')?->firstWhere('key', 'facebook')?->value ?? '' }}" class="w-full px-3 py-2 border rounded" placeholder="https://facebook.com/yourpage">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2">Twitter URL</label>
-                        <input type="text" name="contents[social][twitter]" value="{{ $contents->get('social')?->firstWhere('key', 'twitter')?->value ?? '#' }}" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-sm font-medium mb-2">Twitter URL (leave empty to hide)</label>
+                        <input type="text" name="contents[social][twitter]" value="{{ $contents->get('social')?->firstWhere('key', 'twitter')?->value ?? '' }}" class="w-full px-3 py-2 border rounded" placeholder="https://twitter.com/yourhandle">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2">Instagram URL</label>
-                        <input type="text" name="contents[social][instagram]" value="{{ $contents->get('social')?->firstWhere('key', 'instagram')?->value ?? '#' }}" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-sm font-medium mb-2">Instagram URL (leave empty to hide)</label>
+                        <input type="text" name="contents[social][instagram]" value="{{ $contents->get('social')?->firstWhere('key', 'instagram')?->value ?? '' }}" class="w-full px-3 py-2 border rounded" placeholder="https://instagram.com/yourhandle">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">LinkedIn URL (leave empty to hide)</label>
+                        <input type="text" name="contents[social][linkedin]" value="{{ $contents->get('social')?->firstWhere('key', 'linkedin')?->value ?? '' }}" class="w-full px-3 py-2 border rounded" placeholder="https://linkedin.com/company/yourcompany">
                     </div>
                 </div>
             </div>
