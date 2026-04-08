@@ -17,6 +17,9 @@ class Order extends Model
         'seller_id',
         'order_number',
         'total_amount',
+        'platform_fee',
+        'seller_amount',
+        'commission_rate',
         'status',
         'shipping_address',
         'shipping_carrier',
@@ -24,10 +27,15 @@ class Order extends Model
         'shipped_at',
         'delivered_at',
         'notes',
+        'payment_method',
+        'payment_proof',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'platform_fee' => 'decimal:2',
+        'seller_amount' => 'decimal:2',
+        'commission_rate' => 'decimal:2',
         'shipped_at' => 'datetime',
         'delivered_at' => 'datetime',
     ];

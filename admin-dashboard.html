@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - System Maintenance</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav>
+                <a href="#" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <span class="icon">⚙️</span>
+                    <span>System Maintenance</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>Users</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">📦</span>
+                    <span>Products</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>System Maintenance</h1>
+                <div class="user-info">
+                    <span>Admin User</span>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div id="alert" class="alert" style="display: none;"></div>
+
+                <!-- Database Export Section -->
+                <section class="card">
+                    <div class="card-header">
+                        <h2>
+                            <span class="icon">💾</span>
+                            Database Export
+                        </h2>
+                        <p>Export database tables for backup or migration purposes</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Export Scope</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="scope" value="full" checked>
+                                    <span>Full Database</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="scope" value="selected">
+                                    <span>Selected Tables</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="tableSelection" style="display: none;">
+                            <label>Select Tables</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="users">
+                                    <span>Users</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="products">
+                                    <span>Products</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="orders">
+                                    <span>Orders</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="categories">
+                                    <span>Categories</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Export Format</label>
+                            <select id="exportFormat" class="select-input">
+                                <option value="sql">SQL (.sql)</option>
+                                <option value="csv">CSV (.csv)</option>
+                                <option value="json">JSON (.json)</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="showExportConfirm()">
+                            <span class="icon">⬇️</span>
+                            Export Database
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Clear Cache Section -->
+                <section class="card">
+                    <div class="card-header">
+                        <h2>
+                            <span class="icon">🗑️</span>
+                            Clear Cache
+                        </h2>
+                        <p>Remove cached data to improve system performance</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="cache-info">
+                            <div class="info-item">
+                                <span class="label">Cache Size:</span>
+                                <span class="value">245 MB</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Last Cleared:</span>
+                                <span class="value">2 days ago</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-danger" onclick="showCacheConfirm()">
+                            <span class="icon">🧹</span>
+                            Clear All Cache
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" id="confirmBtn" onclick="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

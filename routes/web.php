@@ -3,6 +3,11 @@
 use App\Http\Controllers\Admin\PageContentController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\CookieConsentController;
+use App\Http\Controllers\Admin\AnomalyDetectionController;
+use App\Http\Controllers\Admin\LoginSecurityController;
+use App\Http\Controllers\Admin\PaymentMethodController;
+use App\Http\Controllers\Admin\PaymentHistoryController;
+use App\Http\Controllers\Admin\CommissionController;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Product;
@@ -14,6 +19,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
+use App\Http\Controllers\Seller\PaymentMethodController as SellerPaymentMethodController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SwitchAccountController;
 use App\Http\Controllers\ProductImageController;
@@ -189,6 +195,7 @@ Route::middleware(['auth', 'verified', 'seller'])
         Route::put('/settings', [SellerController::class, 'updateSettings'])->name('settings.update');
 
         Route::resource('products', SellerProductController::class)->except(['show']);
+        Route::resource('payment-methods', SellerPaymentMethodController::class);
 
         Route::post('/switch-account', [SwitchAccountController::class, 'switch'])->name('switchAccount');
     });
@@ -228,6 +235,26 @@ Route::middleware(['auth', 'verified', 'admin'])
         
         Route::get('/cookie-consent', [CookieConsentController::class, 'edit'])->name('cookie-consent.edit');
         Route::put('/cookie-consent', [CookieConsentController::class, 'update'])->name('cookie-consent.update');
+
+        Route::get('/anomaly-detection', [AnomalyDetectionController::class, 'index'])->name('anomaly-detection.index');
+        Route::get('/anomaly-detection/{id}', [AnomalyDetectionController::class, 'show'])->name('anomaly-detection.show');
+        Route::put('/anomaly-detection/{id}/review', [AnomalyDetectionController::class, 'review'])->name('anomaly-detection.review');
+        Route::post('/anomaly-detection/learn-baselines', [AnomalyDetectionController::class, 'learnBaselines'])->name('anomaly-detection.learn-baselines');
+
+        Route::get('/login-security', [LoginSecurityController::class, 'index'])->name('login-security.index');
+        Route::get('/login-security/lockouts', [LoginSecurityController::class, 'lockouts'])->name('login-security.lockouts');
+        Route::post('/login-security/unlock', [LoginSecurityController::class, 'unlock'])->name('login-security.unlock');
+        Route::post('/login-security/cleanup', [LoginSecurityController::class, 'cleanup'])->name('login-security.cleanup');
+
+        Route::resource('payment-methods', PaymentMethodController::class);
+        
+        Route::get('/payment-history', [PaymentHistoryController::class, 'index'])->name('payment-history.index');
+        Route::get('/payment-history/{payment}', [PaymentHistoryController::class, 'show'])->name('payment-history.show');
+        Route::post('/payment-history/{payment}/update-status', [PaymentHistoryController::class, 'updateStatus'])->name('payment-history.update-status');
+        
+        Route::get('/commission', [CommissionController::class, 'index'])->name('commission.index');
+        Route::post('/commission/{seller}', [CommissionController::class, 'update'])->name('commission.update');
+        Route::post('/commission/default/update', [CommissionController::class, 'updateDefault'])->name('commission.update-default');
 
         Route::get('/reports', [AdminController::class, 'reportsIndex'])->name('reports.index');
         Route::get('/logs', [AdminController::class, 'logsIndex'])->name('logs.index');

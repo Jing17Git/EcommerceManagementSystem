@@ -26,10 +26,69 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0.4); }
             50%       { box-shadow: 0 0 0 12px rgba(255,107,53,0); }
         }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        @keyframes progressFill {
+            from { width: 0; }
+        }
 
         .animate-fade-in { animation: fadeInUp 0.6s ease-out both; }
         .animate-fade-in-delay { animation: fadeInUp 0.6s ease-out 0.15s both; }
         .animate-fade-in-delay2 { animation: fadeInUp 0.6s ease-out 0.3s both; }
+
+        /* Modern Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 480px;
+            animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        /* Clean Icon Styles */
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+
+        .progress-bar-fill {
+            animation: progressFill 0.8s ease-out;
+        }
 
         .bubble { position: absolute; border-radius: 50%; animation: floatBubble ease-in-out infinite; }
 
@@ -200,6 +259,97 @@
                 </div>
                 @endif
 
+                <!-- Login Security Warnings -->
+                @if($errors->has('email'))
+                    @php
+                        $errorMessage = $errors->first('email');
+                        $remainingSeconds = 300; // Default 5 minutes
+                        
+                        // Extract remaining seconds if present
+                        if (str_contains($errorMessage, '|REMAINING:')) {
+                            $parts = explode('|REMAINING:', $errorMessage);
+                            $errorMessage = $parts[0];
+                            $remainingSeconds = (int)($parts[1] ?? 300);
+                        }
+                        
+                        $isLockout = str_contains($errorMessage, 'Too many failed login attempts');
+                        $hasRemainingAttempts = preg_match('/(\d+) attempt\(s\) remaining/', $errorMessage, $matches);
+                    @endphp
+                    
+                    @if($isLockout)
+                        <!-- Simple Lockout Popup -->
+                        <div class="modal-overlay" id="lockout-modal">
+                            <div class="modal-content">
+                                <div class="modal-card">
+                                    <div class="text-center p-8">
+                                        <div class="icon-wrapper mx-auto mb-6" style="background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);">
+                                            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                            </svg>
+                                        </div>
+                                        
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-3">Account Locked</h2>
+                                        
+                                        <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                                            <p class="text-sm text-red-800">{{ $errorMessage }}</p>
+                                        </div>
+                                        
+                                        <div class="space-y-3 mb-6">
+                                            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                                </svg>
+                                                <p class="text-sm text-gray-700">Security protection active</p>
+                                            </div>
+                                            <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg border border-red-200">
+                                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                <div class="flex-1">
+                                                    <p class="text-sm font-semibold text-gray-900">Unlocks in</p>
+                                                    <p class="text-2xl font-bold text-red-600" id="countdown-timer" data-seconds="{{ $remainingSeconds }}">{{ floor($remainingSeconds / 60) }}:{{ str_pad($remainingSeconds % 60, 2, '0', STR_PAD_LEFT) }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <button onclick="closeModal('lockout-modal')" class="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 px-6 rounded-xl font-semibold transition-all">
+                                            Got it
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif($hasRemainingAttempts)
+                        <!-- Simple Warning Popup -->
+                        <div class="modal-overlay" id="warning-modal">
+                            <div class="modal-content">
+                                <div class="modal-card">
+                                    <div class="text-center p-8">
+                                        <div class="icon-wrapper mx-auto mb-6" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);">
+                                            <svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                            </svg>
+                                        </div>
+                                        
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-3">Invalid Credentials</h2>
+                                        
+                                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                                            <p class="text-3xl font-bold text-amber-600 mb-1">{{ $matches[1] ?? 0 }}</p>
+                                            <p class="text-sm text-amber-800">Attempts Remaining</p>
+                                        </div>
+                                        
+                                        <p class="text-sm text-gray-600 mb-6">{{ $errorMessage }}</p>
+                                        
+                                        <button onclick="closeModal('warning-modal')" class="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 px-6 rounded-xl font-semibold transition-all">
+                                            Try Again
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+
                 <!-- Form -->
                 <form method="POST" action="{{ route('login') }}" class="animate-fade-in-delay2">
                     @csrf
@@ -316,6 +466,114 @@
             } else {
                 pw.type = 'password';
                 icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+        }
+
+        // Initialize modals
+        document.addEventListener('DOMContentLoaded', function() {
+            const lockoutModal = document.getElementById('lockout-modal');
+            const warningModal = document.getElementById('warning-modal');
+            
+            if (lockoutModal || warningModal) {
+                // Prevent body scroll
+                document.body.style.overflow = 'hidden';
+                
+                // Play sound
+                if (lockoutModal) {
+                    playNotificationSound('error');
+                    const timerElement = document.getElementById('countdown-timer');
+                    const seconds = parseInt(timerElement?.getAttribute('data-seconds') || '300');
+                    startCountdown(seconds);
+                } else if (warningModal) {
+                    playNotificationSound('warning');
+                }
+            }
+
+            // Click outside to close (warning only)
+            if (warningModal) {
+                warningModal.addEventListener('click', function(e) {
+                    if (e.target === warningModal) {
+                        closeModal('warning-modal');
+                    }
+                });
+            }
+
+            // ESC key to close (warning only)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && warningModal) {
+                    closeModal('warning-modal');
+                }
+            });
+        });
+
+        function startCountdown(seconds) {
+            const timerElement = document.getElementById('countdown-timer');
+            if (!timerElement) return;
+
+            let remaining = seconds;
+
+            function updateTimer() {
+                const minutes = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timerElement.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+
+                if (remaining <= 0) {
+                    timerElement.textContent = '0:00';
+                    timerElement.parentElement.innerHTML = '<p class="text-sm text-green-600 font-semibold">✓ You can try again now!</p>';
+                    return;
+                }
+
+                remaining--;
+                setTimeout(updateTimer, 1000);
+            }
+
+            updateTimer();
+        }
+
+        function playNotificationSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                if (type === 'error') {
+                    oscillator.frequency.value = 200;
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    
+                    setTimeout(() => {
+                        const osc2 = audioContext.createOscillator();
+                        const gain2 = audioContext.createGain();
+                        osc2.connect(gain2);
+                        gain2.connect(audioContext.destination);
+                        osc2.frequency.value = 150;
+                        gain2.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        osc2.start(audioContext.currentTime);
+                        osc2.stop(audioContext.currentTime + 0.15);
+                    }, 150);
+                } else if (type === 'warning') {
+                    oscillator.frequency.value = 400;
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                }
+            } catch (e) {
+                console.log('Audio not available');
             }
         }
     </script>

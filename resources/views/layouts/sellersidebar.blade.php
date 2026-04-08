@@ -83,6 +83,11 @@
                 <span>Wallet / Payments</span>
             </a>
             
+            <a href="{{ route('seller.payment-methods.index') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('seller.payment-methods.*') ? 'active' : '' }}">
+                <i class="fas fa-credit-card"></i>
+                <span>Payment Methods</span>
+            </a>
+            
             <a href="{{ route('seller.shipping') }}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 mb-1 {{ request()->routeIs('seller.shipping') ? 'active' : '' }}">
                 <i class="fas fa-truck"></i>
                 <span>Shipping</span>

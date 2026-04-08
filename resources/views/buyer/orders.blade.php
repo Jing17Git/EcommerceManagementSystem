@@ -46,6 +46,7 @@
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Order</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Seller</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Amount</th>
+                        <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Payment</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Status</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Return</th>
                         <th class="px-4 py-3 text-left text-xs text-gray-300 uppercase">Date</th>
@@ -57,6 +58,20 @@
                             <td class="px-4 py-3">{{ $order->order_number ?? ('ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT)) }}</td>
                             <td class="px-4 py-3">{{ $order->seller?->name ?? 'Seller' }}</td>
                             <td class="px-4 py-3">₱{{ number_format((float)$order->total_amount, 2) }}</td>
+                            <td class="px-4 py-3">
+                                @if($order->payment_method)
+                                    <div class="text-xs">
+                                        <div class="font-semibold text-orange-400">{{ $order->payment_method }}</div>
+                                        @if($order->payment_proof)
+                                            <a href="{{ asset('storage/' . $order->payment_proof) }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">
+                                                View Proof
+                                            </a>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-xs text-gray-400">-</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 rounded text-xs bg-white/10">{{ ucfirst($order->status) }}</span>
                             </td>
@@ -81,7 +96,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-300">No orders yet.</td>
+                            <td colspan="7" class="px-4 py-8 text-center text-gray-300">No orders yet.</td>
                         </tr>
                     @endforelse
                 </tbody>
