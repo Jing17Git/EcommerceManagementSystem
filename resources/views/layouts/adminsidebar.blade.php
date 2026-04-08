@@ -7,7 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <title>{{ config('app.name', 'Laravel') }} — Admin</title>
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet"/>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+<link rel="stylesheet" href="{{ asset('resources/css/app.css') }}">
+<script src="{{ asset('resources/js/app.js') }}" defer></script>
     <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { font-family: 'Inter', system-ui, sans-serif; background: #fafafa; }
