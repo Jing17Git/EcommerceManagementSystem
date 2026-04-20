@@ -256,6 +256,8 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::post('/commission/{seller}', [CommissionController::class, 'update'])->name('commission.update');
         Route::post('/commission/default/update', [CommissionController::class, 'updateDefault'])->name('commission.update-default');
 
+        Route::resource('home-features', HomeFeatureController::class);
+        
         Route::get('/reports', [AdminController::class, 'reportsIndex'])->name('reports.index');
         Route::get('/logs', [AdminController::class, 'logsIndex'])->name('logs.index');
     });

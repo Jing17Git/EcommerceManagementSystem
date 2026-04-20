@@ -7,7 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
     <title>{{ config('app.name', 'Laravel') }} — Admin</title>
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet"/>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('resources/css/app.css') }}">
+    <script src="{{ asset('resources/js/app.js') }}" defer></script>
     <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { font-family: 'Inter', system-ui, sans-serif; background: #fafafa; }
@@ -244,6 +245,10 @@
         <a href="{{ route('admin.page-contents.index') }}" class="nav-link {{ request()->routeIs('admin.page-contents.*') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
             Page Content
+        </a>
+        <a href="{{ route('admin.home-features.index') }}" class="nav-link {{ request()->routeIs('admin.home-features.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="10" cy="8" r="4"></circle></svg>
+            Home Features
         </a>
         <a href="{{ route('admin.cookie-consent.edit') }}" class="nav-link {{ request()->routeIs('admin.cookie-consent.*') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

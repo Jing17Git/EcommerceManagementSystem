@@ -189,51 +189,26 @@
                 <!-- Why Choose Us -->
                 <div class="mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 mb-5">Why Choose ShopHub?</h3>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @php $homeFeatures = \App\Models\HomeFeature::getActiveFeatures(); @endphp
+                        @forelse($homeFeatures as $feature)
                         <div class="feature-card bg-white rounded-xl p-5 border border-gray-100 hover:border-orange-500 hover:shadow-md transition-all">
                             <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-store text-orange-600 text-xl"></i>
+                                <div class="w-12 h-12 {{ $feature->bg_color }} rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i class="{{ $feature->icon }} {{ $feature->icon_color }} text-xl"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-gray-900 mb-1">Trusted Sellers</h4>
-                                    <p class="text-sm text-gray-500">Every seller is verified to ensure authentic products and reliable service.</p>
+                                    <h4 class="font-semibold text-gray-900 mb-1">{{ $feature->title }}</h4>
+                                    <p class="text-sm text-gray-500">{{ $feature->description }}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="feature-card bg-white rounded-xl p-5 border border-gray-100 hover:border-orange-500 hover:shadow-md transition-all">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-medal text-green-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900 mb-1">Quality Guaranteed</h4>
-                                    <p class="text-sm text-gray-500">Each product is carefully curated to meet our quality standards.</p>
-                                </div>
-                            </div>
+                        @empty
+                        <div class="col-span-full text-center py-12 text-gray-500">
+                            <i class="fas fa-star text-4xl mb-4 opacity-50"></i>
+                            <p>No features configured yet. <a href="{{ route('login') }}" class="text-orange-600 hover:underline font-medium">Contact admin</a>.</p>
                         </div>
-                        <div class="feature-card bg-white rounded-xl p-5 border border-gray-100 hover:border-orange-500 hover:shadow-md transition-all">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-shipping-fast text-blue-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900 mb-1">Fast Shipping</h4>
-                                    <p class="text-sm text-gray-500">Quick delivery across the Philippines and beyond.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="feature-card bg-white rounded-xl p-5 border border-gray-100 hover:border-orange-500 hover:shadow-md transition-all">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-headset text-purple-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900 mb-1">24/7 Support</h4>
-                                    <p class="text-sm text-gray-500">We're here to help anytime you need assistance.</p>
-                                </div>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
 
