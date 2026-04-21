@@ -191,7 +191,7 @@
 
     <!-- Top Header -->
     <header class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 z-50 shadow-sm">
-        <a href="#" class="flex items-center gap-3">
+        <a href="{{ url('/') }}" class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
                 <i class="fas fa-store text-white text-lg"></i>
             </div>
@@ -202,7 +202,7 @@
         </a>
         <div class="flex items-center gap-3">
             <span class="text-sm text-gray-500">Already have an account?</span>
-            <a href="#" class="px-4 py-2 text-sm font-semibold text-orange-600 border border-orange-300 rounded-lg hover:bg-orange-50 transition">
+            <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-semibold text-orange-600 border border-orange-300 rounded-lg hover:bg-orange-50 transition">
                 <i class="fas fa-sign-in-alt mr-1"></i> Login
             </a>
         </div>
@@ -282,6 +282,23 @@
                     <p class="text-sm text-gray-500">Join thousands of buyers and sellers on ShopHub</p>
                 </div>
 
+                <!-- Validation Errors -->
+                @if ($errors->any())
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg animate-fade-in">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-red-800 mb-2">Please fix the following errors:</h3>
+                                <ul class="text-sm text-red-700 space-y-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>• {{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Form -->
                 <form method="POST" action="{{ route('register') }}" class="animate-fade-in-delay2">
                     @csrf
@@ -292,15 +309,21 @@
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
                             <div class="relative">
                                 <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                                <input type="text" name="name" value="{{ old('name') }}" placeholder="Juan Dela Cruz" class="input-field">
+                                <input type="text" name="name" value="{{ old('name') }}" placeholder="Juan Dela Cruz" class="input-field @error('name') error @enderror" required>
                             </div>
+                            @error('name')
+                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
                             <div class="relative">
                                 <i class="fas fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                                <input type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" class="input-field">
+                                <input type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" class="input-field @error('email') error @enderror" required>
                             </div>
+                            @error('email')
+                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -309,11 +332,14 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
                         <div class="relative">
                             <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                            <input id="password" type="password" name="password" placeholder="Create a strong password" class="input-field" style="padding-right:44px;" oninput="checkStrength(this.value)">
+                            <input id="password" type="password" name="password" placeholder="Create a strong password" class="input-field @error('password') error @enderror" style="padding-right:44px;" oninput="checkStrength(this.value)" required>
                             <button type="button" onclick="togglePw('password','eye1')" style="background:none;border:none;cursor:pointer;" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
                                 <i class="fas fa-eye text-sm" id="eye1"></i>
                             </button>
                         </div>
+                        @error('password')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
                         <!-- Strength bar -->
                         <div class="strength-bar mt-2">
                             <div class="strength-fill" id="strength-fill"></div>
@@ -326,11 +352,14 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
                         <div class="relative">
                             <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                            <input id="password_confirm" type="password" name="password_confirmation" placeholder="Re-enter your password" class="input-field" style="padding-right:44px;">
+                            <input id="password_confirm" type="password" name="password_confirmation" placeholder="Re-enter your password" class="input-field @error('password_confirmation') error @enderror" style="padding-right:44px;" required>
                             <button type="button" onclick="togglePw('password_confirm','eye2')" style="background:none;border:none;cursor:pointer;" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
                                 <i class="fas fa-eye text-sm" id="eye2"></i>
                             </button>
                         </div>
+                        @error('password_confirmation')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Role Selector (Hidden - all users register as buyers by default) -->
@@ -352,14 +381,14 @@
                 <!-- Login CTA -->
                 <p class="text-center text-sm text-gray-500">
                     Already have an account?
-                    <a href="#" class="font-bold text-orange-500 hover:text-orange-700 transition ml-1">
+                    <a href="{{ route('login') }}" class="font-bold text-orange-500 hover:text-orange-700 transition ml-1">
                         Sign in here <i class="fas fa-arrow-right text-xs"></i>
                     </a>
                 </p>
 
                 <!-- Back to home -->
                 <div class="mt-5 text-center">
-                    <a href="#" class="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-orange-500 transition">
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-orange-500 transition">
                         <i class="fas fa-arrow-left text-xs"></i> Back to ShopHub
                     </a>
                 </div>
