@@ -31,7 +31,7 @@ class PageController extends Controller
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'content' => $request->content,
-            'is_active' => $request->has('is_active'),
+            'active' => $request->has('active'),
         ]);
 
         return redirect()->route('admin.pages.index')
@@ -54,7 +54,7 @@ class PageController extends Controller
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'content' => $request->content,
-            'is_active' => $request->has('is_active'),
+            'active' => $request->has('active'),
         ]);
 
         return redirect()->route('admin.pages.index')

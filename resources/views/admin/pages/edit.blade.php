@@ -19,9 +19,9 @@
 
       <div class="mb-3">
         <label>Status</label>
-        <select name="is_active" class="form-control">
-          <option value="1" {{ $page->is_active ? 'selected' : '' }}>Active</option>
-          <option value="0" {{ !$page->is_active ? 'selected' : '' }}>Inactive</option>
+        <select name="active" class="form-control">
+          <option value="1" {{ $page->active ? 'selected' : '' }}>Active</option>
+          <option value="0" {{ !$page->active ? 'selected' : '' }}>Inactive</option>
         </select>
       </div>
 

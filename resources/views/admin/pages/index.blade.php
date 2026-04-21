@@ -173,7 +173,7 @@
               <td><strong>{{ $page->title }}</strong></td>
               <td><span class="slug-pill">{{ $page->slug }}</span></td>
               <td>
-                @if($page->is_active)
+                @if($page->active)
                   <span class="badge badge-active">Active</span>
                 @else
                   <span class="badge badge-inactive">Inactive</span>

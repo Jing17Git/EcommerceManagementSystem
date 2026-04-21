@@ -10,6 +10,6 @@ class Page extends Model
         'title',
         'slug',
         'content',
-        'is_active'
+        'active'
     ];
 }
