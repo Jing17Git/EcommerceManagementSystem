@@ -316,7 +316,7 @@ require __DIR__.'/auth.php';
 Route::get('/page/{slug}', function ($slug) {
 
     $page = Page::where('slug', $slug)
-        ->where('is_active', true)
+        ->where('active', true)
         ->firstOrFail();
 
     return view('customer.page.index', compact('page'));
