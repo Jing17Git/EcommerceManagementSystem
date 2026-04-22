@@ -16,7 +16,17 @@ class SellerApplication extends Model
         'business_phone',
         'business_address',
         'documents',
+        'business_permit',
+        'business_permit_name',
+        'permit_expiry_date',
+        'id_card',
+        'id_card_name',
         'status',
+        'rejection_reason',
+    ];
+
+    protected $casts = [
+        'permit_expiry_date' => 'date',
     ];
 
     public function user()
