@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\CookieConsentController;
 use App\Http\Controllers\Admin\AnomalyDetectionController;
 use App\Http\Controllers\Admin\LoginSecurityController;
+use App\Http\Controllers\Admin\SecurityCenterController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\PaymentHistoryController;
 use App\Http\Controllers\Admin\CommissionController;
@@ -232,6 +233,8 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('/page-contents', [PageContentController::class, 'index'])->name('page-contents.index');
         Route::get('/page-contents/{page}/edit', [PageContentController::class, 'edit'])->name('page-contents.edit');
         Route::put('/page-contents/{page}', [PageContentController::class, 'update'])->name('page-contents.update');
+        
+        Route::get('/security-center', [SecurityCenterController::class, 'index'])->name('security.index');
         
         Route::get('/cookie-consent', [CookieConsentController::class, 'edit'])->name('cookie-consent.edit');
         Route::put('/cookie-consent', [CookieConsentController::class, 'update'])->name('cookie-consent.update');
