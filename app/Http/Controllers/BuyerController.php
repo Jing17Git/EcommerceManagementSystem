@@ -13,6 +13,7 @@ use App\Models\SellerPaymentMethod;
 use App\Models\ReturnRequest;
 use App\Models\SellerApplication;
 use App\Models\User;
+use App\Services\SellerApplicationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -252,12 +253,10 @@ class BuyerController extends Controller
     {
         $user = Auth::user();
         
-        // Check if user is already a seller
         if ($user->role === 'seller') {
             return redirect()->route('buyer.dashboard')->with('error', 'You are already a seller.');
         }
         
-        // Check if user has a pending application
         $pendingApplication = SellerApplication::where('user_id', $user->id)
             ->where('status', 'pending')
             ->first();
@@ -271,18 +270,38 @@ class BuyerController extends Controller
             'business_email' => 'required|email|max:255',
             'business_phone' => 'required|string|max:20',
             'business_address' => 'required|string|max:500',
+            'business_permit' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'business_permit_name' => 'required|string|max:255',
+            'permit_expiry_date' => 'required|date|after:today',
+            'id_card' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'id_card_name' => 'required|string|max:255',
         ]);
         
-        SellerApplication::create([
+        $businessPermitPath = $request->file('business_permit')->store('seller_documents/permits', 'public');
+        $idCardPath = $request->file('id_card')->store('seller_documents/ids', 'public');
+        
+        $application = SellerApplication::create([
             'user_id' => $user->id,
             'business_name' => $validated['business_name'],
             'business_email' => $validated['business_email'],
             'business_phone' => $validated['business_phone'],
             'business_address' => $validated['business_address'],
+            'business_permit' => $businessPermitPath,
+            'business_permit_name' => $validated['business_permit_name'],
+            'permit_expiry_date' => $validated['permit_expiry_date'],
+            'id_card' => $idCardPath,
+            'id_card_name' => $validated['id_card_name'],
             'status' => 'pending',
         ]);
         
-        return redirect()->route('buyer.dashboard')->with('success', 'Your seller application has been submitted successfully! Please wait for admin approval.');
+        $service = new SellerApplicationService();
+        $service->processApplication($application);
+        
+        if ($application->status === 'approved') {
+            return redirect()->route('buyer.dashboard')->with('success', 'Your seller application has been automatically approved! You can now switch to seller mode.');
+        } else {
+            return redirect()->route('buyer.dashboard')->with('error', 'Your seller application was rejected: ' . $application->rejection_reason);
+        }
     }
 
     /**
